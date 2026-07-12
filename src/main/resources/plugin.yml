@@ -1,0 +1,53 @@
+name: SeaChat
+version: '${project.version}'
+main: com.seachat.SeaChat
+api-version: '1.21'
+softdepend:
+  - PlaceholderAPI
+commands:
+  chat:
+    description: Manage SeaChat chat features.
+    usage: /chat <toggle|slowmode|reload|inventory|hand|enderchest|poll>
+  seachatinv:
+    description: Opens a shared SeaChat inventory snapshot.
+    usage: /seachatinv <id>
+permissions:
+  seachat.toggle:
+    description: Allows a player to hide or show public chat.
+    default: op
+  seachat.slowmode:
+    description: Allows toggling chat slowmode.
+    default: op
+  seachat.reload:
+    description: Allows reloading SeaChat.
+    default: op
+  seachat.bypass.slowmode:
+    description: Bypasses chat slowmode.
+    default: op
+  seachat.bypass.caps:
+    description: Bypasses the caps filter.
+    default: op
+  seachat.notify:
+    description: Notifies a player when chat filter blocks a message.
+    default: op
+  seachat.display.inventory:
+    description: Allows a player to share a read-only inventory snapshot with /chat inventory.
+    default: op
+  seachat.display.hand:
+    description: Allows a player to share their held item with /chat hand.
+    default: op
+  seachat.display.enderchest:
+    description: Allows a player to share a read-only ender chest snapshot with /chat enderchest.
+    default: op
+  seachat.poll.create:
+    description: Allows creating and stopping polls with /chat poll.
+    default: op
+  seachat.poll.respond:
+    description: Allows poll responses typed as yes or no in chat to count.
+    default: false
+  seachat.announcement.trigger:
+    description: Allows triggering configured announcement events.
+    default: op
+  seachat.chat.local:
+    description: Allows using and receiving the default local private chat.
+    default: op

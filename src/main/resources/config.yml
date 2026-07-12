@@ -1,0 +1,64 @@
+﻿
+announcements:
+  enabled: true
+
+chat-format:
+  enabled: true
+
+  format: "%luckperms_prefix%<reset> {player} %luckperms_suffix% <message>"
+
+slowmode:
+  enabled: true
+
+  cooldown-seconds: 2
+
+display:
+  enabled: true
+
+  cooldown-seconds: 10
+
+  snapshots:
+    enabled: true
+
+    expire-seconds: 300
+
+    cleanup-interval-seconds: 300
+
+private-chats:
+  local:
+    enabled: true
+    toggleable: true
+    format: "<b><#FFFF55>[LOCAL] {sender} »<reset><#FFFF55> <message>"
+    permission: "seachat.chat.local"
+    command: "lc"
+
+filters:
+  caps:
+    enabled: true
+
+    threshold-percent: 80
+
+    minimum-letters: 5
+
+  bad-words:
+    enabled: true
+
+    words:
+      - "bastard"
+      - "bitch"
+      - "shit"
+      - "cock"
+      - "cunt"
+      - "dick"
+      - "douche"
+      - "fag"
+      - "fuck"
+      - "nigga"
+      - "nigger"
+      - "piss"
+      - "prick"
+      - "pussy"
+      - "retard"
+      - "slut"
+      - "whore"
+

@@ -1,0 +1,12 @@
+package com.seachat;
+
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+
+final class CommandRefreshListener implements Listener {
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        event.getPlayer().updateCommands();
+    }
+}

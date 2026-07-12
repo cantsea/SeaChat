@@ -1,0 +1,40 @@
+﻿
+announcements:
+  example:
+    enabled: false
+
+    defined-times:
+      enabled: true
+      times:
+        - "09:00"
+        - "13:30"
+        - "20:00"
+
+    interval:
+      enabled: false
+      start: "10:00"
+      interval-minutes: 30
+
+    messages:
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - "<center><gray>Join our Discord for updates and events."
+
+  tebex-purchase:
+    enabled: true
+
+    trigger:
+      enabled: true
+      name: "tebex-purchase"
+
+    defined-times:
+      enabled: false
+      times: []
+
+    interval:
+      enabled: false
+      start: "10:00"
+      interval-minutes: 30
+
+    messages:
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - "<center><yellow>{player}</yellow> <gray>just purchased</gray> <green>{package}</green><gray>!"
