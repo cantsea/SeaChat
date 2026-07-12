@@ -1,5 +1,7 @@
-package com.seachat;
+package com.seachat.privatechat;
 
+import com.seachat.SeaChat;
+import com.seachat.config.ChatSettings;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -18,7 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 
-final class PrivateChatManager implements Listener {
+public final class PrivateChatManager implements Listener {
     private static final Pattern COMMAND_PATTERN = Pattern.compile("[a-z0-9][a-z0-9_-]*");
 
     private final SeaChat plugin;
@@ -27,12 +29,12 @@ final class PrivateChatManager implements Listener {
     private final ConcurrentMap<UUID, String> toggledChannels = new ConcurrentHashMap<>();
     private volatile Map<String, PrivateChatChannel> activeChannels = Map.of();
 
-    PrivateChatManager(SeaChat plugin, ChatSettings settings) {
+    public PrivateChatManager(SeaChat plugin, ChatSettings settings) {
         this.plugin = plugin;
         this.settings = settings;
     }
 
-    void reloadChannels() {
+    public void reloadChannels() {
         unregisterChannels();
 
         CommandMap commandMap = Bukkit.getCommandMap();
@@ -82,13 +84,13 @@ final class PrivateChatManager implements Listener {
         });
     }
 
-    void shutdown() {
+    public void shutdown() {
         toggledChannels.clear();
         activeChannels = Map.of();
         unregisterChannels();
     }
 
-    boolean handleToggledChat(Player player, String message) {
+    public boolean handleToggledChat(Player player, String message) {
         String channelId = toggledChannels.get(player.getUniqueId());
         if (channelId == null) {
             return false;
@@ -124,7 +126,7 @@ final class PrivateChatManager implements Listener {
         toggledChannels.remove(event.getPlayer().getUniqueId());
     }
 
-    void filterVisibleCommands(PlayerCommandSendEvent event) {
+    public void filterVisibleCommands(PlayerCommandSendEvent event) {
         for (Map.Entry<String, PrivateChatCommand> entry : registeredCommands.entrySet()) {
             if (event.getPlayer().hasPermission(entry.getValue().channel().permission())) {
                 continue;
@@ -152,7 +154,7 @@ final class PrivateChatManager implements Listener {
         registeredCommands.clear();
     }
 
-    private boolean execute(PrivateChatChannel channel, CommandSender sender, String[] args) {
+    boolean execute(PrivateChatChannel channel, CommandSender sender, String[] args) {
         if (!sender.hasPermission(channel.permission())) {
             sender.sendMessage(settings.message(sender instanceof Player player ? player : null, "private-chat-no-permission"));
             return true;
@@ -204,28 +206,4 @@ final class PrivateChatManager implements Listener {
         }
     }
 
-    private static final class PrivateChatCommand extends Command {
-        private final PrivateChatChannel channel;
-        private final PrivateChatManager manager;
-
-        private PrivateChatCommand(PrivateChatChannel channel, PrivateChatManager manager) {
-            super(channel.command());
-            this.channel = channel;
-            this.manager = manager;
-        }
-
-        @Override
-        public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-            return manager.execute(channel, sender, args);
-        }
-
-        @Override
-        public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
-            return List.of();
-        }
-
-        private PrivateChatChannel channel() {
-            return channel;
-        }
-    }
 }

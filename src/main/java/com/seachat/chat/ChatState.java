@@ -1,21 +1,21 @@
-package com.seachat;
+package com.seachat.chat;
 
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-final class ChatState {
+public final class ChatState {
     private final Set<UUID> hiddenPlayers = ConcurrentHashMap.newKeySet();
     private final ConcurrentMap<UUID, Long> lastChatTimes = new ConcurrentHashMap<>();
     private final ConcurrentMap<UUID, Long> lastDisplayTimes = new ConcurrentHashMap<>();
     private volatile boolean slowmodeEnabled;
 
-    ChatState(boolean slowmodeEnabled) {
+    public ChatState(boolean slowmodeEnabled) {
         this.slowmodeEnabled = slowmodeEnabled;
     }
 
-    boolean toggleHidden(UUID playerId) {
+    public boolean toggleHidden(UUID playerId) {
         if (hiddenPlayers.remove(playerId)) {
             return false;
         }
@@ -24,11 +24,11 @@ final class ChatState {
         return true;
     }
 
-    boolean isHidden(UUID playerId) {
+    public boolean isHidden(UUID playerId) {
         return hiddenPlayers.contains(playerId);
     }
 
-    boolean toggleSlowmode() {
+    public boolean toggleSlowmode() {
         slowmodeEnabled = !slowmodeEnabled;
         if (!slowmodeEnabled) {
             lastChatTimes.clear();
@@ -36,18 +36,18 @@ final class ChatState {
         return slowmodeEnabled;
     }
 
-    boolean isSlowmodeEnabled() {
+    public boolean isSlowmodeEnabled() {
         return slowmodeEnabled;
     }
 
-    void setSlowmodeEnabled(boolean slowmodeEnabled) {
+    public void setSlowmodeEnabled(boolean slowmodeEnabled) {
         this.slowmodeEnabled = slowmodeEnabled;
         if (!slowmodeEnabled) {
             lastChatTimes.clear();
         }
     }
 
-    long remainingSlowmodeMillis(UUID playerId, long cooldownMillis) {
+    public long remainingSlowmodeMillis(UUID playerId, long cooldownMillis) {
         Long lastChatTime = lastChatTimes.get(playerId);
         if (lastChatTime == null) {
             return 0L;
@@ -57,11 +57,11 @@ final class ChatState {
         return Math.max(0L, cooldownMillis - elapsed);
     }
 
-    void markChat(UUID playerId) {
+    public void markChat(UUID playerId) {
         lastChatTimes.put(playerId, System.currentTimeMillis());
     }
 
-    long remainingDisplayCooldownMillis(UUID playerId, long cooldownMillis) {
+    public long remainingDisplayCooldownMillis(UUID playerId, long cooldownMillis) {
         Long lastDisplayTime = lastDisplayTimes.get(playerId);
         if (lastDisplayTime == null) {
             return 0L;
@@ -71,11 +71,11 @@ final class ChatState {
         return Math.max(0L, cooldownMillis - elapsed);
     }
 
-    void markDisplay(UUID playerId) {
+    public void markDisplay(UUID playerId) {
         lastDisplayTimes.put(playerId, System.currentTimeMillis());
     }
 
-    void clear() {
+    public void clear() {
         hiddenPlayers.clear();
         lastChatTimes.clear();
         lastDisplayTimes.clear();

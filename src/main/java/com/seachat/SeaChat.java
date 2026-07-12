@@ -1,5 +1,15 @@
 package com.seachat;
 
+import com.seachat.announcement.AnnouncementManager;
+import com.seachat.chat.ChatState;
+import com.seachat.command.ChatCommand;
+import com.seachat.config.ChatSettings;
+import com.seachat.display.InventoryDisplayManager;
+import com.seachat.listener.ChatListener;
+import com.seachat.listener.CommandRefreshListener;
+import com.seachat.listener.CommandVisibilityListener;
+import com.seachat.poll.PollManager;
+import com.seachat.privatechat.PrivateChatManager;
 import java.io.File;
 import org.bukkit.entity.Player;
 import org.bukkit.command.PluginCommand;
@@ -80,7 +90,7 @@ public final class SeaChat extends JavaPlugin {
         }
     }
 
-    void reloadSettings() {
+    public void reloadSettings() {
         reloadConfig();
         reloadLang();
         this.settings.copyFrom(ChatSettings.from(getConfig(), langConfig));
@@ -91,7 +101,7 @@ public final class SeaChat extends JavaPlugin {
         refreshCommands();
     }
 
-    void saveSlowmodeEnabled(boolean enabled) {
+    public void saveSlowmodeEnabled(boolean enabled) {
         getConfig().set("slowmode.enabled", enabled);
         saveConfig();
     }

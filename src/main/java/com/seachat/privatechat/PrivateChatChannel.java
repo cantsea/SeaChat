@@ -1,6 +1,6 @@
-package com.seachat;
+package com.seachat.privatechat;
 
-record PrivateChatChannel(
+public record PrivateChatChannel(
         String id,
         boolean enabled,
         boolean toggleable,

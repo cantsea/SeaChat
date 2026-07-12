@@ -1,14 +1,17 @@
-package com.seachat;
+package com.seachat.listener;
 
+import com.seachat.config.ChatSettings;
+import com.seachat.poll.PollManager;
+import com.seachat.privatechat.PrivateChatManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 
-final class CommandVisibilityListener implements Listener {
+public final class CommandVisibilityListener implements Listener {
     private final ChatSettings settings;
     private final PrivateChatManager privateChatManager;
 
-    CommandVisibilityListener(ChatSettings settings, PrivateChatManager privateChatManager) {
+    public CommandVisibilityListener(ChatSettings settings, PrivateChatManager privateChatManager) {
         this.settings = settings;
         this.privateChatManager = privateChatManager;
     }

@@ -1,8 +1,8 @@
-package com.seachat;
+package com.seachat.announcement;
 
+import com.seachat.SeaChat;
+import com.seachat.config.ChatSettings;
 import java.io.File;
-import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +18,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-final class AnnouncementManager {
+public final class AnnouncementManager {
     private static final DateTimeFormatter TIME_FORMATTER = new DateTimeFormatterBuilder()
             .appendPattern("H:mm")
             .optionalStart()
@@ -32,12 +32,12 @@ final class AnnouncementManager {
     private List<Announcement> announcements = List.of();
     private LocalDateTime lastCheckTime;
 
-    AnnouncementManager(SeaChat plugin, ChatSettings settings) {
+    public AnnouncementManager(SeaChat plugin, ChatSettings settings) {
         this.plugin = plugin;
         this.settings = settings;
     }
 
-    void reload() {
+    public void reload() {
         shutdown();
 
         if (!settings.announcementsEnabled()) {
@@ -58,7 +58,7 @@ final class AnnouncementManager {
         task = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 20L, 20L);
     }
 
-    void shutdown() {
+    public void shutdown() {
         if (task != null) {
             task.cancel();
             task = null;
@@ -89,7 +89,7 @@ final class AnnouncementManager {
             }
 
             String trigger = loadTrigger(announcementSection);
-            Schedule schedule = loadSchedule(id, announcementSection);
+            AnnouncementSchedule schedule = loadSchedule(id, announcementSection);
             if (!schedule.hasValidSchedule() && trigger.isBlank()) {
                 plugin.getLogger().warning("Skipping announcement '" + id
                         + "' because it has no valid enabled schedule or trigger.");
@@ -126,7 +126,7 @@ final class AnnouncementManager {
         sendAnnouncement(announcement, Map.of());
     }
 
-    boolean trigger(String trigger, Map<String, String> placeholders) {
+    public boolean trigger(String trigger, Map<String, String> placeholders) {
         boolean triggered = false;
         for (Announcement announcement : announcements) {
             if (!announcement.trigger().equalsIgnoreCase(trigger)) {
@@ -139,7 +139,7 @@ final class AnnouncementManager {
         return triggered;
     }
 
-    boolean test(String id, Map<String, String> placeholders) {
+    public boolean test(String id, Map<String, String> placeholders) {
         for (Announcement announcement : announcements) {
             if (!announcement.id().equalsIgnoreCase(id)) {
                 continue;
@@ -151,7 +151,7 @@ final class AnnouncementManager {
         return false;
     }
 
-    List<String> announcementIds() {
+    public List<String> announcementIds() {
         return announcements.stream()
                 .map(Announcement::id)
                 .toList();
@@ -178,7 +178,7 @@ final class AnnouncementManager {
         return List.of(message);
     }
 
-    private Schedule loadSchedule(String id, ConfigurationSection section) {
+    private AnnouncementSchedule loadSchedule(String id, ConfigurationSection section) {
         ConfigurationSection definedTimesSection = section.getConfigurationSection("defined-times");
         ConfigurationSection intervalSection = section.getConfigurationSection("interval");
 
@@ -198,7 +198,7 @@ final class AnnouncementManager {
                     + "' has interval enabled but no valid interval start/time.");
         }
 
-        return new Schedule(timesEnabled, times, intervalEnabled, startTime, intervalSeconds);
+        return new AnnouncementSchedule(timesEnabled, times, intervalEnabled, startTime, intervalSeconds);
     }
 
     private String loadTrigger(ConfigurationSection section) {
@@ -295,77 +295,4 @@ final class AnnouncementManager {
         }
     }
 
-    private record Announcement(
-            String id,
-            List<String> messages,
-            Schedule schedule,
-            String trigger
-    ) {
-        private boolean shouldSend(LocalDateTime previousCheck, LocalDateTime now) {
-            if (schedule.intervalEnabled()) {
-                return intervalDue(previousCheck, now);
-            }
-            return schedule.timesEnabled() && listedTimeDue(previousCheck, now);
-        }
-
-        private boolean hasScheduledActivation() {
-            return schedule.hasValidSchedule();
-        }
-
-        private boolean listedTimeDue(LocalDateTime previousCheck, LocalDateTime now) {
-            for (LocalDate date = previousCheck.toLocalDate(); !date.isAfter(now.toLocalDate()); date = date.plusDays(1L)) {
-                for (ScheduledTime scheduledTime : schedule.times()) {
-                    LocalDateTime dueTime = date.atTime(scheduledTime.time());
-                    if (!scheduledTime.hasSeconds()) {
-                        dueTime = dueTime.withSecond(0).withNano(0);
-                    }
-                    if (dueTime.isAfter(previousCheck) && !dueTime.isAfter(now)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private boolean intervalDue(LocalDateTime previousCheck, LocalDateTime now) {
-            if (schedule.startTime() == null || schedule.intervalSeconds() <= 0L) {
-                return false;
-            }
-
-            for (LocalDate date = previousCheck.toLocalDate(); !date.isAfter(now.toLocalDate()); date = date.plusDays(1L)) {
-                LocalDateTime start = date.atTime(schedule.startTime());
-                LocalDateTime dayEnd = date.plusDays(1L).atStartOfDay().minusNanos(1L);
-                LocalDateTime effectiveNow = now.isBefore(dayEnd) ? now : dayEnd;
-                if (effectiveNow.isBefore(start)) {
-                    continue;
-                }
-
-                long elapsedSeconds = Duration.between(start, effectiveNow).getSeconds();
-                long slot = elapsedSeconds / schedule.intervalSeconds();
-                LocalDateTime dueTime = start.plusSeconds(slot * schedule.intervalSeconds());
-                if (dueTime.isAfter(previousCheck) && !dueTime.isAfter(now)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    private record Schedule(
-            boolean timesEnabled,
-            List<ScheduledTime> times,
-            boolean intervalEnabled,
-            LocalTime startTime,
-            long intervalSeconds
-    ) {
-        private boolean hasValidSchedule() {
-            if (intervalEnabled) {
-                return startTime != null && intervalSeconds > 0L;
-            }
-            return timesEnabled && !times.isEmpty();
-        }
-    }
-
-    private record ScheduledTime(LocalTime time, boolean hasSeconds) {
-    }
 }

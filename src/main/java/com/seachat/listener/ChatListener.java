@@ -1,5 +1,10 @@
-package com.seachat;
+package com.seachat.listener;
 
+import com.seachat.SeaChat;
+import com.seachat.chat.ChatState;
+import com.seachat.config.ChatSettings;
+import com.seachat.poll.PollManager;
+import com.seachat.privatechat.PrivateChatManager;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import java.util.Locale;
 import java.util.Map;
@@ -10,7 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-final class ChatListener implements Listener {
+public final class ChatListener implements Listener {
     private static final String SLOWMODE_BYPASS_PERMISSION = "seachat.bypass.slowmode";
     private static final String CAPS_BYPASS_PERMISSION = "seachat.bypass.caps";
     private static final String NOTIFY_PERMISSION = "seachat.notify";
@@ -21,7 +26,7 @@ final class ChatListener implements Listener {
     private final PollManager pollManager;
     private final PrivateChatManager privateChatManager;
 
-    ChatListener(
+    public ChatListener(
             SeaChat plugin,
             ChatSettings settings,
             ChatState state,

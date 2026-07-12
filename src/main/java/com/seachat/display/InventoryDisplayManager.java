@@ -1,5 +1,7 @@
-package com.seachat;
+package com.seachat.display;
 
+import com.seachat.SeaChat;
+import com.seachat.config.ChatSettings;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,23 +24,22 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-final class InventoryDisplayManager implements CommandExecutor, Listener {
+public final class InventoryDisplayManager implements CommandExecutor, Listener {
     private final SeaChat plugin;
     private final ChatSettings settings;
     private final Map<String, StoredSnapshot> snapshots = new ConcurrentHashMap<>();
     private BukkitTask cleanupTask;
 
-    InventoryDisplayManager(SeaChat plugin, ChatSettings settings) {
+    public InventoryDisplayManager(SeaChat plugin, ChatSettings settings) {
         this.plugin = plugin;
         this.settings = settings;
         reloadCleanupTask();
     }
 
-    void reloadCleanupTask() {
+    public void reloadCleanupTask() {
         if (cleanupTask != null) {
             cleanupTask.cancel();
             cleanupTask = null;
@@ -57,7 +58,7 @@ final class InventoryDisplayManager implements CommandExecutor, Listener {
         cleanupTask = Bukkit.getScheduler().runTaskTimer(plugin, this::cleanupExpiredSnapshots, intervalTicks, intervalTicks);
     }
 
-    void shutdown() {
+    public void shutdown() {
         if (cleanupTask != null) {
             cleanupTask.cancel();
             cleanupTask = null;
@@ -65,21 +66,21 @@ final class InventoryDisplayManager implements CommandExecutor, Listener {
         snapshots.clear();
     }
 
-    Component createDisplayMessage(Player player, ChatSettings settings) {
+    public Component createDisplayMessage(Player player, ChatSettings settings) {
         String snapshotId = createInventorySnapshot(player);
         return settings.message(player, "inventory-display", Map.of("player", settings.escape(player.getName())))
                 .clickEvent(ClickEvent.runCommand("/seachatinv " + snapshotId))
                 .hoverEvent(HoverEvent.showText(settings.message(player, "inventory-display-hover")));
     }
 
-    Component createEnderChestDisplayMessage(Player player, ChatSettings settings) {
+    public Component createEnderChestDisplayMessage(Player player, ChatSettings settings) {
         String snapshotId = createEnderChestSnapshot(player);
         return settings.message(player, "enderchest-display", Map.of("player", settings.escape(player.getName())))
                 .clickEvent(ClickEvent.runCommand("/seachatinv " + snapshotId))
                 .hoverEvent(HoverEvent.showText(settings.message(player, "enderchest-display-hover")));
     }
 
-    Component createHandDisplayMessage(Player player, ChatSettings settings) {
+    public Component createHandDisplayMessage(Player player, ChatSettings settings) {
         ItemStack item = player.getInventory().getItemInMainHand();
         if (isEmpty(item)) {
             return null;
@@ -94,15 +95,15 @@ final class InventoryDisplayManager implements CommandExecutor, Listener {
                 .hoverEvent(HoverEvent.showText(settings.message(player, "hand-display-hover")));
     }
 
-    String createInventorySnapshot(Player player) {
+    public String createInventorySnapshot(Player player) {
         return storeSnapshot(InventorySnapshot.fromPlayerInventory(player));
     }
 
-    String createEnderChestSnapshot(Player player) {
+    public String createEnderChestSnapshot(Player player) {
         return storeSnapshot(InventorySnapshot.fromEnderChest(player));
     }
 
-    String createHandSnapshot(Player player) {
+    public String createHandSnapshot(Player player) {
         return storeSnapshot(InventorySnapshot.fromHand(player));
     }
 
@@ -219,81 +220,6 @@ final class InventoryDisplayManager implements CommandExecutor, Listener {
     private record StoredSnapshot(InventorySnapshot snapshot, long createdAtMillis) {
     }
 
-    private record InventorySnapshot(String title, int size, ItemStack[] storage, ItemStack[] armor, ItemStack offhand) {
-        static InventorySnapshot fromPlayerInventory(Player player) {
-            return new InventorySnapshot(
-                    player.getName() + "'s Inventory",
-                    54,
-                    cloneContents(player.getInventory().getStorageContents()),
-                    cloneContents(player.getInventory().getArmorContents()),
-                    cloneItem(player.getInventory().getItemInOffHand())
-            );
-        }
-
-        static InventorySnapshot fromEnderChest(Player player) {
-            return new InventorySnapshot(
-                    player.getName() + "'s Ender Chest",
-                    player.getEnderChest().getSize(),
-                    cloneContents(player.getEnderChest().getContents()),
-                    new ItemStack[0],
-                    null
-            );
-        }
-
-        static InventorySnapshot fromHand(Player player) {
-            return new InventorySnapshot(
-                    player.getName() + "'s Held Item",
-                    9,
-                    new ItemStack[] {
-                            null,
-                            null,
-                            null,
-                            null,
-                            cloneItem(player.getInventory().getItemInMainHand()),
-                            null,
-                            null,
-                            null,
-                            null
-                    },
-                    new ItemStack[0],
-                    null
-            );
-        }
-
-        Inventory createInventory() {
-            DisplayInventoryHolder holder = new DisplayInventoryHolder(this);
-            Inventory inventory = Bukkit.createInventory(holder, size, title);
-            holder.setInventory(inventory);
-            for (int slot = 0; slot < storage.length && slot < inventory.getSize(); slot++) {
-                inventory.setItem(slot, cloneItem(storage[slot]));
-            }
-
-            if (inventory.getSize() >= 54) {
-                inventory.setItem(45, cloneItem(armor.length > 3 ? armor[3] : null));
-                inventory.setItem(46, cloneItem(armor.length > 2 ? armor[2] : null));
-                inventory.setItem(47, cloneItem(armor.length > 1 ? armor[1] : null));
-                inventory.setItem(48, cloneItem(armor.length > 0 ? armor[0] : null));
-                inventory.setItem(50, cloneItem(offhand));
-            }
-            return inventory;
-        }
-
-        private static ItemStack[] cloneContents(ItemStack[] contents) {
-            ItemStack[] cloned = new ItemStack[contents.length];
-            for (int i = 0; i < contents.length; i++) {
-                cloned[i] = cloneItem(contents[i]);
-            }
-            return cloned;
-        }
-
-        private static ItemStack cloneItem(ItemStack item) {
-            if (isEmpty(item)) {
-                return null;
-            }
-            return item.clone();
-        }
-    }
-
     private static boolean isEmpty(ItemStack item) {
         return item == null || item.getType() == Material.AIR;
     }
@@ -337,28 +263,4 @@ final class InventoryDisplayManager implements CommandExecutor, Listener {
         });
     }
 
-    private static final class DisplayInventoryHolder implements InventoryHolder {
-        private final InventorySnapshot snapshot;
-        private Inventory inventory;
-
-        private DisplayInventoryHolder(InventorySnapshot snapshot) {
-            this.snapshot = snapshot;
-        }
-
-        @Override
-        public Inventory getInventory() {
-            return inventory;
-        }
-
-        private void setInventory(Inventory inventory) {
-            this.inventory = inventory;
-        }
-
-        private ItemStack itemAt(int slot) {
-            if (slot < 0 || slot >= snapshot.storage.length) {
-                return null;
-            }
-            return InventorySnapshot.cloneItem(snapshot.storage[slot]);
-        }
-    }
 }

@@ -1,5 +1,6 @@
-package com.seachat;
+package com.seachat.config;
 
+import com.seachat.privatechat.PrivateChatChannel;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-final class ChatSettings {
+public final class ChatSettings {
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
     private static final Pattern PLACEHOLDER_API_PATTERN = Pattern.compile("%[^%\\s]+%");
@@ -156,7 +157,7 @@ final class ChatSettings {
         this.privateChatChannels = privateChatChannels;
     }
 
-    static ChatSettings from(FileConfiguration config, FileConfiguration lang) {
+    public static ChatSettings from(FileConfiguration config, FileConfiguration lang) {
         return new ChatSettings(
                 lang.getString("prefix", DEFAULT_PREFIX),
                 loadMessages(lang),
@@ -182,7 +183,7 @@ final class ChatSettings {
         );
     }
 
-    void copyFrom(ChatSettings other) {
+    public void copyFrom(ChatSettings other) {
         this.prefix = other.prefix;
         this.messages = other.messages;
         this.chatFormatEnabled = other.chatFormatEnabled;
@@ -203,23 +204,23 @@ final class ChatSettings {
         this.privateChatChannels = other.privateChatChannels;
     }
 
-    Component message(String key) {
+    public Component message(String key) {
         return message(null, key, Map.of());
     }
 
-    Component message(String key, Map<String, String> placeholders) {
+    public Component message(String key, Map<String, String> placeholders) {
         return message(null, key, placeholders);
     }
 
-    Component message(Player player, String key) {
+    public Component message(Player player, String key) {
         return message(player, key, Map.of());
     }
 
-    Component message(Player player, String key, Map<String, String> placeholders) {
+    public Component message(Player player, String key, Map<String, String> placeholders) {
         return message(player, key, placeholders, Map.of());
     }
 
-    Component message(
+    public Component message(
             Player player,
             String key,
             Map<String, String> placeholders,
@@ -230,14 +231,14 @@ final class ChatSettings {
         return renderTemplate(player, template, placeholders, componentPlaceholders);
     }
 
-    Component chatMessage(Player player, Component displayName, Component message) {
+    public Component chatMessage(Player player, Component displayName, Component message) {
         return renderTemplate(player,
                 chatFormat,
                 Map.of("player", escape(player.getName())),
                 Map.of("display_name", displayName, "message", message));
     }
 
-    Component privateChatMessage(CommandSender sender, PrivateChatChannel channel, String message) {
+    public Component privateChatMessage(CommandSender sender, PrivateChatChannel channel, String message) {
         Player player = sender instanceof Player senderPlayer ? senderPlayer : null;
         return renderTemplate(player, normalizeLegacyFormatting(channel.format()),
                 Map.of(
@@ -249,11 +250,11 @@ final class ChatSettings {
                 Map.of("message", Component.text(message)));
     }
 
-    Component announcementMessage(Player player, String template) {
+    public Component announcementMessage(Player player, String template) {
         return announcementMessage(player, template, Map.of());
     }
 
-    Component announcementMessage(Player player, String template, Map<String, String> placeholders) {
+    public Component announcementMessage(Player player, String template, Map<String, String> placeholders) {
         return renderTemplate(player, template, placeholders, Map.of(), true);
     }
 
@@ -288,85 +289,85 @@ final class ChatSettings {
         return MINI_MESSAGE.deserialize(template, resolvers);
     }
 
-    String escape(String input) {
+    public String escape(String input) {
         return MINI_MESSAGE.escapeTags(input);
     }
 
-    Component inventoryChatMessage(Player player, Component inventory) {
+    public Component inventoryChatMessage(Player player, Component inventory) {
         return message(player, "inventory-display-chat",
                 Map.of("player", escape(player.getName())),
                 Map.of("inventory", inventory));
     }
 
-    Component handChatMessage(Player player, Component hand) {
+    public Component handChatMessage(Player player, Component hand) {
         return message(player, "hand-display-chat",
                 Map.of("player", escape(player.getName())),
                 Map.of("hand", hand));
     }
 
-    Component enderChestChatMessage(Player player, Component enderChest) {
+    public Component enderChestChatMessage(Player player, Component enderChest) {
         return message(player, "enderchest-display-chat",
                 Map.of("player", escape(player.getName())),
                 Map.of("enderchest", enderChest));
     }
 
-    long slowmodeCooldownMillis() {
+    public long slowmodeCooldownMillis() {
         return slowmodeCooldownMillis;
     }
 
-    long displayCooldownMillis() {
+    public long displayCooldownMillis() {
         return displayCooldownMillis;
     }
 
-    boolean displayEnabled() {
+    public boolean displayEnabled() {
         return displayEnabled;
     }
 
-    boolean snapshotExpiryEnabled() {
+    public boolean snapshotExpiryEnabled() {
         return snapshotExpiryEnabled;
     }
 
-    long snapshotExpireMillis() {
+    public long snapshotExpireMillis() {
         return snapshotExpireMillis;
     }
 
-    long snapshotCleanupIntervalTicks() {
+    public long snapshotCleanupIntervalTicks() {
         return snapshotCleanupIntervalTicks;
     }
 
-    boolean chatFormatEnabled() {
+    public boolean chatFormatEnabled() {
         return chatFormatEnabled;
     }
 
-    boolean announcementsEnabled() {
+    public boolean announcementsEnabled() {
         return announcementsEnabled;
     }
 
-    boolean slowmodeEnabled() {
+    public boolean slowmodeEnabled() {
         return slowmodeEnabled;
     }
 
-    boolean capsEnabled() {
+    public boolean capsEnabled() {
         return capsEnabled;
     }
 
-    double capsThresholdPercent() {
+    public double capsThresholdPercent() {
         return capsThresholdPercent;
     }
 
-    int capsMinimumLetters() {
+    public int capsMinimumLetters() {
         return capsMinimumLetters;
     }
 
-    boolean badWordsEnabled() {
+    public boolean badWordsEnabled() {
         return badWordsEnabled;
     }
 
-    List<String> badWords() {
+    public List<String> badWords() {
         return badWords;
     }
 
-    List<PrivateChatChannel> privateChatChannels() {
+    public List<PrivateChatChannel> privateChatChannels() {
         return privateChatChannels;
     }
 

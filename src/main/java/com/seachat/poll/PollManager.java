@@ -1,19 +1,19 @@
-package com.seachat;
+package com.seachat.poll;
 
-import java.util.Locale;
+import com.seachat.SeaChat;
+import com.seachat.chat.ChatState;
+import com.seachat.config.ChatSettings;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-final class PollManager {
-    static final String CREATE_PERMISSION = "seachat.poll.create";
-    static final String RESPOND_PERMISSION = "seachat.poll.respond";
+public final class PollManager {
+    public static final String CREATE_PERMISSION = "seachat.poll.create";
+    public static final String RESPOND_PERMISSION = "seachat.poll.respond";
 
     private final SeaChat plugin;
     private final ChatSettings settings;
@@ -21,13 +21,13 @@ final class PollManager {
     private final Object pollLock = new Object();
     private ActivePoll activePoll;
 
-    PollManager(SeaChat plugin, ChatSettings settings, ChatState state) {
+    public PollManager(SeaChat plugin, ChatSettings settings, ChatState state) {
         this.plugin = plugin;
         this.settings = settings;
         this.state = state;
     }
 
-    boolean createPoll(CommandSender sender, long seconds, String question) {
+    public boolean createPoll(CommandSender sender, long seconds, String question) {
         if (seconds <= 0L || seconds > Long.MAX_VALUE / 20L) {
             sender.sendMessage(settings.message(senderPlayer(sender), "poll-invalid-time"));
             return true;
@@ -48,7 +48,7 @@ final class PollManager {
         return true;
     }
 
-    boolean stopPoll(CommandSender sender) {
+    public boolean stopPoll(CommandSender sender) {
         ActivePoll poll;
         synchronized (pollLock) {
             poll = activePoll;
@@ -64,7 +64,7 @@ final class PollManager {
         return true;
     }
 
-    boolean handleChatResponse(Player player, String message) {
+    public boolean handleChatResponse(Player player, String message) {
         Vote vote = Vote.from(message);
         if (vote == null) {
             return false;
@@ -89,7 +89,7 @@ final class PollManager {
         return true;
     }
 
-    void shutdown() {
+    public void shutdown() {
         ActivePoll poll;
         synchronized (pollLock) {
             poll = activePoll;
@@ -175,7 +175,7 @@ final class PollManager {
         return sender.hasPermission(CREATE_PERMISSION);
     }
 
-    static boolean canCreatePoll(CommandSender sender) {
+    public static boolean canCreatePoll(CommandSender sender) {
         return hasCreatePermission(sender);
     }
 
@@ -187,39 +187,4 @@ final class PollManager {
         return sender instanceof Player player ? player : null;
     }
 
-    private enum Vote {
-        YES("yes"),
-        NO("no");
-
-        private final String messageValue;
-
-        Vote(String messageValue) {
-            this.messageValue = messageValue;
-        }
-
-        private static Vote from(String message) {
-            String normalized = message.trim().toLowerCase(Locale.ROOT);
-            return switch (normalized) {
-                case "yes" -> YES;
-                case "no" -> NO;
-                default -> null;
-            };
-        }
-    }
-
-    private static final class ActivePoll {
-        private final UUID creatorId;
-        private final String creatorName;
-        private final String question;
-        private final long seconds;
-        private final ConcurrentMap<UUID, Vote> votes = new ConcurrentHashMap<>();
-        private BukkitTask endTask;
-
-        private ActivePoll(UUID creatorId, String creatorName, String question, long seconds) {
-            this.creatorId = creatorId;
-            this.creatorName = creatorName;
-            this.question = question;
-            this.seconds = seconds;
-        }
-    }
 }
