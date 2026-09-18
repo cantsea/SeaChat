@@ -3,9 +3,11 @@ package com.seachat.config;
 import com.seachat.privatechat.PrivateChatChannel;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +28,7 @@ public final class ChatSettings {
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
     private static final Pattern PLACEHOLDER_API_PATTERN = Pattern.compile("%[^%\\s]+%");
+    private static final int MAX_PLACEHOLDER_DEPTH = 10;
     private static final Pattern CENTER_TAG_PATTERN = Pattern.compile("(?i)</?center\\s*/?>");
     private static final Pattern MINI_MESSAGE_TAG_PATTERN =
             Pattern.compile("(?i)</?(?:#[0-9a-f]{6}|[a-z][a-z0-9_-]*)(?::[^<>]*)?/?>");
@@ -446,19 +449,47 @@ public final class ChatSettings {
                 return text;
             }
 
-            Matcher matcher = PLACEHOLDER_API_PATTERN.matcher(text);
-            StringBuilder expandedText = new StringBuilder();
-            while (matcher.find()) {
-                String placeholder = matcher.group();
-                Object result = method.invoke(null, player, placeholder);
-                String replacement = result instanceof String expanded ? expanded : placeholder;
-                matcher.appendReplacement(expandedText, Matcher.quoteReplacement(formatPlaceholderReplacement(replacement)));
-            }
-            matcher.appendTail(expandedText);
-            return expandedText.toString();
+            return expandPlaceholders(player, text, method);
         } catch (ReflectiveOperationException | ClassCastException exception) {
             placeholderLookupFailed = true;
             return text;
+        }
+    }
+
+    static String expandPlaceholders(Player player, String text, Method method) throws ReflectiveOperationException {
+        Matcher matcher = PLACEHOLDER_API_PATTERN.matcher(text);
+        StringBuilder expandedText = new StringBuilder();
+        while (matcher.find()) {
+            String replacement = expandPlaceholder(player, matcher.group(), method, new HashSet<>());
+            // Convert formatting only after all nested values have been inserted.
+            matcher.appendReplacement(expandedText, Matcher.quoteReplacement(formatPlaceholderReplacement(replacement)));
+        }
+        matcher.appendTail(expandedText);
+        return expandedText.toString();
+    }
+
+    private static String expandPlaceholder(Player player, String placeholder, Method method, Set<String> resolving)
+            throws ReflectiveOperationException {
+        if (resolving.size() >= MAX_PLACEHOLDER_DEPTH || !resolving.add(placeholder)) {
+            return placeholder;
+        }
+
+        try {
+            Object result = method.invoke(null, player, placeholder);
+            if (!(result instanceof String replacement) || replacement.equals(placeholder)) {
+                return placeholder;
+            }
+
+            Matcher matcher = PLACEHOLDER_API_PATTERN.matcher(replacement);
+            StringBuilder expandedText = new StringBuilder();
+            while (matcher.find()) {
+                String nested = expandPlaceholder(player, matcher.group(), method, resolving);
+                matcher.appendReplacement(expandedText, Matcher.quoteReplacement(nested));
+            }
+            matcher.appendTail(expandedText);
+            return expandedText.toString();
+        } finally {
+            resolving.remove(placeholder);
         }
     }
 

@@ -5,6 +5,7 @@ announcements:
 chat-format:
   enabled: true
 
+  # PlaceholderAPI values can contain nested placeholders (up to 10 levels).
   format: "%luckperms_prefix%<reset> {player} %luckperms_suffix% <message>"
 
 slowmode:
