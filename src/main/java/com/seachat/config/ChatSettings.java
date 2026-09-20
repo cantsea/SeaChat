@@ -1,6 +1,7 @@
 package com.seachat.config;
 
 import com.seachat.privatechat.PrivateChatChannel;
+import com.seachat.chat.ChatColors;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -45,6 +48,10 @@ public final class ChatSettings {
     private static final String DEFAULT_CHAT_FORMAT = "%luckperms_prefix%<reset> {player} %luckperms_suffix% <message>";
     private static final Map<String, String> DEFAULT_MESSAGES = Map.ofEntries(
             Map.entry("only-players-toggle", "{prefix} Only players can toggle their chat visibility."),
+            Map.entry("only-players-toggle-colors", "{prefix} Only players can toggle chat colors."),
+            Map.entry("no-permission-toggle-colors", "{prefix} You do not have permission to toggle chat colors."),
+            Map.entry("chat-colors-disabled", "{prefix} Colors in player message text are now disabled for you."),
+            Map.entry("chat-colors-enabled", "{prefix} Colors in player message text are now enabled for you."),
             Map.entry("only-players-inventory-display", "{prefix} Only players can share their inventory in chat."),
             Map.entry("only-players-hand-display", "{prefix} Only players can share their held item in chat."),
             Map.entry("only-players-enderchest-display", "{prefix} Only players can share their ender chest in chat."),
@@ -105,6 +112,7 @@ public final class ChatSettings {
     private volatile Map<String, String> messages;
     private volatile boolean chatFormatEnabled;
     private volatile String chatFormat;
+    private volatile TextColor disabledChatColor;
     private volatile boolean announcementsEnabled;
     private volatile boolean slowmodeEnabled;
     private volatile long slowmodeCooldownMillis;
@@ -125,6 +133,7 @@ public final class ChatSettings {
             Map<String, String> messages,
             boolean chatFormatEnabled,
             String chatFormat,
+            TextColor disabledChatColor,
             boolean announcementsEnabled,
             boolean slowmodeEnabled,
             long slowmodeCooldownMillis,
@@ -144,6 +153,7 @@ public final class ChatSettings {
         this.messages = messages;
         this.chatFormatEnabled = chatFormatEnabled;
         this.chatFormat = chatFormat;
+        this.disabledChatColor = disabledChatColor;
         this.announcementsEnabled = announcementsEnabled;
         this.slowmodeEnabled = slowmodeEnabled;
         this.slowmodeCooldownMillis = slowmodeCooldownMillis;
@@ -166,6 +176,7 @@ public final class ChatSettings {
                 loadMessages(lang),
                 config.getBoolean("chat-format.enabled", true),
                 config.getString("chat-format.format", DEFAULT_CHAT_FORMAT),
+                parseDisabledChatColor(config.getString("chat-format.disabled-color", "white")),
                 config.getBoolean("announcements.enabled", true),
                 config.getBoolean("slowmode.enabled", false),
                 Math.max(0L, config.getLong("slowmode.cooldown-seconds", 5L)) * 1000L,
@@ -191,6 +202,7 @@ public final class ChatSettings {
         this.messages = other.messages;
         this.chatFormatEnabled = other.chatFormatEnabled;
         this.chatFormat = other.chatFormat;
+        this.disabledChatColor = other.disabledChatColor;
         this.announcementsEnabled = other.announcementsEnabled;
         this.slowmodeEnabled = other.slowmodeEnabled;
         this.slowmodeCooldownMillis = other.slowmodeCooldownMillis;
@@ -242,7 +254,12 @@ public final class ChatSettings {
     }
 
     public Component privateChatMessage(CommandSender sender, PrivateChatChannel channel, String message) {
+        return privateChatMessage(sender, channel, message, false);
+    }
+
+    public Component privateChatMessage(CommandSender sender, PrivateChatChannel channel, String message, boolean disableColors) {
         Player player = sender instanceof Player senderPlayer ? senderPlayer : null;
+        Component messageComponent = Component.text(message);
         return renderTemplate(player, normalizeLegacyFormatting(channel.format()),
                 Map.of(
                         "sender", escape(sender.getName()),
@@ -250,7 +267,7 @@ public final class ChatSettings {
                         "chat", escape(channel.id()),
                         "command", escape(channel.command())
                 ),
-                Map.of("message", Component.text(message)));
+                Map.of("message", disableColors ? ChatColors.withoutColors(messageComponent, disabledChatColor) : messageComponent));
     }
 
     public Component announcementMessage(Player player, String template) {
@@ -340,6 +357,20 @@ public final class ChatSettings {
 
     public boolean chatFormatEnabled() {
         return chatFormatEnabled;
+    }
+
+    public TextColor disabledChatColor() {
+        return disabledChatColor;
+    }
+
+    private static TextColor parseDisabledChatColor(String value) {
+        if (value == null) {
+            return NamedTextColor.WHITE;
+        }
+        String normalized = value.trim().toLowerCase(Locale.ROOT);
+        TextColor color = normalized.matches("#[0-9a-f]{6}")
+                ? TextColor.fromHexString(normalized) : NamedTextColor.NAMES.value(normalized);
+        return color == null ? NamedTextColor.WHITE : color;
     }
 
     public boolean announcementsEnabled() {

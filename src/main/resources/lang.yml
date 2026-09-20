@@ -4,6 +4,14 @@ prefix: "<#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b><#ffffff>"
 messages:
   only-players-toggle: "{prefix} Only players can toggle their chat visibility."
 
+  only-players-toggle-colors: "{prefix} Only players can toggle chat colors."
+
+  no-permission-toggle-colors: "{prefix} You do not have permission to toggle chat colors."
+
+  chat-colors-disabled: "{prefix} Colors in player message text are now disabled for you."
+
+  chat-colors-enabled: "{prefix} Colors in player message text are now enabled for you."
+
   no-permission-toggle: "{prefix} You do not have permission to toggle chat."
 
   no-permission-inventory-display: "{prefix} You do not have permission to share your inventory in chat."

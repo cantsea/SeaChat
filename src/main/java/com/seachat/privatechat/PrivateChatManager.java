@@ -1,6 +1,7 @@
 package com.seachat.privatechat;
 
 import com.seachat.SeaChat;
+import com.seachat.chat.ChatState;
 import com.seachat.config.ChatSettings;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -25,13 +27,15 @@ public final class PrivateChatManager implements Listener {
 
     private final SeaChat plugin;
     private final ChatSettings settings;
+    private final ChatState state;
     private final Map<String, PrivateChatCommand> registeredCommands = new HashMap<>();
     private final ConcurrentMap<UUID, String> toggledChannels = new ConcurrentHashMap<>();
     private volatile Map<String, PrivateChatChannel> activeChannels = Map.of();
 
-    public PrivateChatManager(SeaChat plugin, ChatSettings settings) {
+    public PrivateChatManager(SeaChat plugin, ChatSettings settings, ChatState state) {
         this.plugin = plugin;
         this.settings = settings;
+        this.state = state;
     }
 
     public void reloadChannels() {
@@ -193,16 +197,25 @@ public final class PrivateChatManager implements Listener {
 
     private void sendToChannel(PrivateChatChannel channel, CommandSender sender, String message) {
         var formattedMessage = settings.privateChatMessage(sender, channel, message);
+        Component colorlessMessage = null;
         boolean sentToPlayer = false;
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.hasPermission(channel.permission())) {
-                player.sendMessage(formattedMessage);
+                if (sender instanceof Player && state.areColorsDisabled(player.getUniqueId())) {
+                    if (colorlessMessage == null) {
+                        colorlessMessage = settings.privateChatMessage(sender, channel, message, true);
+                    }
+                    player.sendMessage(colorlessMessage);
+                } else {
+                    player.sendMessage(formattedMessage);
+                }
                 sentToPlayer = true;
             }
         }
 
         if (!(sender instanceof Player) || !sentToPlayer) {
-            sender.sendMessage(formattedMessage);
+            sender.sendMessage(sender instanceof Player player && state.areColorsDisabled(player.getUniqueId())
+                    ? settings.privateChatMessage(sender, channel, message, true) : formattedMessage);
         }
     }
 

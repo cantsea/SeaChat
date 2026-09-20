@@ -4,9 +4,15 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.entity.Player;
 
 public final class ChatState {
     private final Set<UUID> hiddenPlayers = ConcurrentHashMap.newKeySet();
+    private final Set<UUID> colorsDisabledPlayers = ConcurrentHashMap.newKeySet();
     private final ConcurrentMap<UUID, Long> lastChatTimes = new ConcurrentHashMap<>();
     private final ConcurrentMap<UUID, Long> lastDisplayTimes = new ConcurrentHashMap<>();
     private volatile boolean slowmodeEnabled;
@@ -26,6 +32,28 @@ public final class ChatState {
 
     public boolean isHidden(UUID playerId) {
         return hiddenPlayers.contains(playerId);
+    }
+
+    public boolean toggleColors(UUID playerId) {
+        if (colorsDisabledPlayers.remove(playerId)) {
+            return false;
+        }
+
+        colorsDisabledPlayers.add(playerId);
+        return true;
+    }
+
+    public boolean areColorsDisabled(UUID playerId) {
+        return colorsDisabledPlayers.contains(playerId);
+    }
+
+    public Component forViewer(Audience viewer, Component message) {
+        return forViewer(viewer, message, NamedTextColor.WHITE);
+    }
+
+    public Component forViewer(Audience viewer, Component message, TextColor replacementColor) {
+        return viewer instanceof Player player && areColorsDisabled(player.getUniqueId())
+                ? ChatColors.withoutColors(message, replacementColor) : message;
     }
 
     public boolean toggleSlowmode() {
@@ -77,6 +105,7 @@ public final class ChatState {
 
     public void clear() {
         hiddenPlayers.clear();
+        colorsDisabledPlayers.clear();
         lastChatTimes.clear();
         lastDisplayTimes.clear();
     }

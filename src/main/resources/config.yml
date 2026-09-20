@@ -8,6 +8,11 @@ chat-format:
   # PlaceholderAPI values can contain nested placeholders (up to 10 levels).
   format: "%luckperms_prefix%<reset> {player} %luckperms_suffix% <message>"
 
+  # Message text color for players who use /chat toggle colors to disable colors.
+  # Use a color name (e.g. gray) or a quoted hex color (e.g. "#AABBCC").
+  # Missing or invalid values use white. Apply changes with /chat reload.
+  disabled-color: "white"
+
 slowmode:
   enabled: true
 

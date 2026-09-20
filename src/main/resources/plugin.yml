@@ -15,6 +15,9 @@ permissions:
   seachat.toggle:
     description: Allows a player to hide or show public chat.
     default: op
+  seachat.toggle.colors:
+    description: Allows a player to toggle colors in player message text they see.
+    default: op
   seachat.slowmode:
     description: Allows toggling chat slowmode.
     default: op

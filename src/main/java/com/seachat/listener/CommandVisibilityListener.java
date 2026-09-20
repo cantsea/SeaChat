@@ -21,6 +21,7 @@ public final class CommandVisibilityListener implements Listener {
         privateChatManager.filterVisibleCommands(event);
 
         if (event.getPlayer().hasPermission("seachat.toggle")
+                || event.getPlayer().hasPermission("seachat.toggle.colors")
                 || event.getPlayer().hasPermission("seachat.slowmode")
                 || event.getPlayer().hasPermission("seachat.reload")
                 || event.getPlayer().hasPermission("seachat.announcement.trigger")

@@ -5,10 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -123,6 +126,26 @@ public class ChatSettingsTest {
                 Placeholder.component("message", Component.text("%rank_name% <red>hello")));
 
         assertEquals("Admin %rank_name% <red>hello", PlainTextComponentSerializer.plainText().serialize(rendered));
+    }
+
+    @Test
+    public void loadsNamedAndHexDisabledColors() {
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("chat-format.disabled-color", "  DARK_GRAY  ");
+        assertEquals(NamedTextColor.DARK_GRAY, ChatSettings.from(config, new YamlConfiguration()).disabledChatColor());
+
+        config.set("chat-format.disabled-color", "#AaBbCc");
+        assertEquals(TextColor.color(0xAABBCC), ChatSettings.from(config, new YamlConfiguration()).disabledChatColor());
+    }
+
+    @Test
+    public void defaultsMissingOrInvalidDisabledColorsToWhite() {
+        YamlConfiguration config = new YamlConfiguration();
+        assertEquals(NamedTextColor.WHITE, ChatSettings.from(config, new YamlConfiguration()).disabledChatColor());
+        for (String invalid : new String[]{"", "rainbow", "#12345", "#GGHHII", "<red>"}) {
+            config.set("chat-format.disabled-color", invalid);
+            assertEquals(NamedTextColor.WHITE, ChatSettings.from(config, new YamlConfiguration()).disabledChatColor());
+        }
     }
 
     private String expand(String template) throws Exception {
