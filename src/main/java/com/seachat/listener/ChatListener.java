@@ -1,7 +1,7 @@
 package com.seachat.listener;
 
 import com.seachat.SeaChat;
-import com.seachat.chat.ChatColors;
+import com.seachat.chat.ChatColorRenderer;
 import com.seachat.chat.ChatState;
 import com.seachat.config.ChatSettings;
 import com.seachat.poll.PollManager;
@@ -10,7 +10,6 @@ import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import java.util.Locale;
 import java.util.Map;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -97,16 +96,7 @@ public final class ChatListener implements Listener {
                 ? (source, sourceDisplayName, renderedMessage, viewer) ->
                         settings.chatMessage(source, sourceDisplayName, renderedMessage)
                 : event.renderer();
-        event.renderer((source, sourceDisplayName, renderedMessage, viewer) -> {
-            Component viewerMessage = state.forViewer(viewer, renderedMessage, settings.disabledChatColor());
-            if (renderer instanceof ChatRenderer.ViewerUnaware) {
-                // These renderers cache their first result, so always feed them the original message.
-                Component rendered = renderer.render(source, sourceDisplayName, renderedMessage, viewer);
-                return viewerMessage == renderedMessage ? rendered
-                        : ChatColors.replaceMessage(rendered, renderedMessage, viewerMessage);
-            }
-            return renderer.render(source, sourceDisplayName, viewerMessage, viewer);
-        });
+        event.renderer(new ChatColorRenderer(renderer, state, settings.disabledChatColor()));
     }
 
     private boolean shouldCancelForBadWord(String message) {

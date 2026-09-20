@@ -219,7 +219,13 @@ public class ColorToggleTest {
 
         config.set("chat-format.disabled-color", "#AABBCC");
         settings.copyFrom(ChatSettings.from(config, new YamlConfiguration()));
-        TranslatableComponent reloaded = (TranslatableComponent) event.renderer().render(sender, name, message, sender);
+        // In-flight messages keep one consistent color; new events use the reloaded setting.
+        assertSame(own, event.renderer().render(sender, name, message, sender));
+        AsyncChatEvent nextEvent = new AsyncChatEvent(true, sender, new HashSet<>(Set.of(sender, other)),
+                ChatRenderer.defaultRenderer(), message, message, null);
+        new ChatListener(null, settings, state, new PollManager(null, settings, state),
+                new PrivateChatManager(null, settings, state)).onChat(nextEvent);
+        TranslatableComponent reloaded = (TranslatableComponent) nextEvent.renderer().render(sender, name, message, sender);
         assertEquals(name, reloaded.arguments().getFirst().value());
         assertEquals(message.color(TextColor.color(0xAABBCC)), reloaded.arguments().get(1).value());
         TranslatableComponent others = (TranslatableComponent) event.renderer().render(sender, name, message, other);
