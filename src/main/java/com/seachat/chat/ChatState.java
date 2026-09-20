@@ -48,7 +48,7 @@ public final class ChatState {
     }
 
     public Component forViewer(Audience viewer, Component message) {
-        return forViewer(viewer, message, NamedTextColor.WHITE);
+        return forViewer(viewer, message, NamedTextColor.GRAY);
     }
 
     public Component forViewer(Audience viewer, Component message, TextColor replacementColor) {

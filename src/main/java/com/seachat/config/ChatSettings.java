@@ -31,6 +31,9 @@ public final class ChatSettings {
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
     private static final Pattern PLACEHOLDER_API_PATTERN = Pattern.compile("%[^%\\s]+%");
+    private static final Pattern DISABLED_COLOR_PATTERN = Pattern.compile(
+            "(?i)[&§]x(?:[&§][0-9a-f]){6}|[&§]#[0-9a-f]{6}|[&§][0-9a-fr]"
+                    + "|<(?:color:|colour:|c:)?(?:#[0-9a-f]{6}|[a-z_]+)>");
     private static final int MAX_PLACEHOLDER_DEPTH = 10;
     private static final Pattern CENTER_TAG_PATTERN = Pattern.compile("(?i)</?center\\s*/?>");
     private static final Pattern MINI_MESSAGE_TAG_PATTERN =
@@ -109,7 +112,7 @@ public final class ChatSettings {
     private volatile Map<String, String> messages;
     private volatile boolean chatFormatEnabled;
     private volatile String chatFormat;
-    private volatile TextColor disabledChatColor;
+    private volatile String disabledChatColor;
     private volatile boolean announcementsEnabled;
     private volatile boolean slowmodeEnabled;
     private volatile long slowmodeCooldownMillis;
@@ -130,7 +133,7 @@ public final class ChatSettings {
             Map<String, String> messages,
             boolean chatFormatEnabled,
             String chatFormat,
-            TextColor disabledChatColor,
+            String disabledChatColor,
             boolean announcementsEnabled,
             boolean slowmodeEnabled,
             long slowmodeCooldownMillis,
@@ -173,7 +176,7 @@ public final class ChatSettings {
                 loadMessages(lang),
                 config.getBoolean("chat-format.enabled", true),
                 config.getString("chat-format.format", DEFAULT_CHAT_FORMAT),
-                parseDisabledChatColor(config.getString("chat-format.disabled-color", "white")),
+                config.getString("chat-format.disabled-color", "gray"),
                 config.getBoolean("announcements.enabled", true),
                 config.getBoolean("slowmode.enabled", false),
                 Math.max(0L, config.getLong("slowmode.cooldown-seconds", 5L)) * 1000L,
@@ -264,7 +267,7 @@ public final class ChatSettings {
                         "chat", escape(channel.id()),
                         "command", escape(channel.command())
                 ),
-                Map.of("message", disableColors ? ChatColors.withoutColors(messageComponent, disabledChatColor) : messageComponent));
+                Map.of("message", disableColors ? ChatColors.withoutColors(messageComponent, disabledChatColor(player)) : messageComponent));
     }
 
     public Component announcementMessage(Player player, String template) {
@@ -351,17 +354,56 @@ public final class ChatSettings {
     }
 
     public TextColor disabledChatColor() {
-        return disabledChatColor;
+        return disabledChatColor(null);
+    }
+
+    public TextColor disabledChatColor(Player sender) {
+        String value = disabledChatColor;
+        // A suffix may contain only a color code, which component serialization would discard.
+        if (value != null && PLACEHOLDER_API_PATTERN.matcher(value).find()) {
+            value = applyPlaceholderApi(sender, value, false);
+        }
+        return parseDisabledChatColor(value);
     }
 
     private static TextColor parseDisabledChatColor(String value) {
         if (value == null) {
-            return NamedTextColor.WHITE;
+            return NamedTextColor.GRAY;
         }
         String normalized = value.trim().toLowerCase(Locale.ROOT);
         TextColor color = normalized.matches("#[0-9a-f]{6}")
                 ? TextColor.fromHexString(normalized) : NamedTextColor.NAMES.value(normalized);
-        return color == null ? NamedTextColor.WHITE : color;
+        if (color != null) {
+            return color;
+        }
+
+        // Prefix/suffix text is ignored; the last recognized color code supplies the message color.
+        color = NamedTextColor.GRAY;
+        Matcher matcher = DISABLED_COLOR_PATTERN.matcher(normalized);
+        while (matcher.find()) {
+            String token = matcher.group();
+            TextColor candidate;
+            if (token.startsWith("<")) {
+                String name = token.substring(1, token.length() - 1);
+                name = name.substring(name.lastIndexOf(':') + 1);
+                candidate = name.equals("reset") ? NamedTextColor.WHITE
+                        : name.startsWith("#") ? TextColor.fromHexString(name) : NamedTextColor.NAMES.value(name);
+            } else if (token.charAt(1) == 'x') {
+                candidate = TextColor.fromHexString("#" + token.substring(2).replace("&", "").replace("§", ""));
+            } else if (token.charAt(1) == '#') {
+                candidate = TextColor.fromHexString(token.substring(1));
+            } else {
+                // Append text so a standalone legacy code such as &f retains its style.
+                candidate = PLACEHOLDER_LEGACY_SERIALIZER.deserialize(token.replace('§', '&') + "x").color();
+                if (token.charAt(1) == 'r') {
+                    candidate = NamedTextColor.WHITE;
+                }
+            }
+            if (candidate != null) {
+                color = candidate;
+            }
+        }
+        return color;
     }
 
     public boolean announcementsEnabled() {
@@ -455,6 +497,10 @@ public final class ChatSettings {
     }
 
     private static String applyPlaceholderApi(Player player, String text) {
+        return applyPlaceholderApi(player, text, true);
+    }
+
+    private static String applyPlaceholderApi(Player player, String text, boolean formatReplacements) {
         if (player == null || !Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             return text;
         }
@@ -471,7 +517,7 @@ public final class ChatSettings {
                 return text;
             }
 
-            return expandPlaceholders(player, text, method);
+            return expandPlaceholders(player, text, method, formatReplacements);
         } catch (ReflectiveOperationException | ClassCastException exception) {
             placeholderLookupFailed = true;
             return text;
@@ -479,12 +525,18 @@ public final class ChatSettings {
     }
 
     static String expandPlaceholders(Player player, String text, Method method) throws ReflectiveOperationException {
+        return expandPlaceholders(player, text, method, true);
+    }
+
+    private static String expandPlaceholders(Player player, String text, Method method, boolean formatReplacements)
+            throws ReflectiveOperationException {
         Matcher matcher = PLACEHOLDER_API_PATTERN.matcher(text);
         StringBuilder expandedText = new StringBuilder();
         while (matcher.find()) {
             String replacement = expandPlaceholder(player, matcher.group(), method, new HashSet<>());
             // Convert formatting only after all nested values have been inserted.
-            matcher.appendReplacement(expandedText, Matcher.quoteReplacement(formatPlaceholderReplacement(replacement)));
+            matcher.appendReplacement(expandedText, Matcher.quoteReplacement(
+                    formatReplacements ? formatPlaceholderReplacement(replacement) : replacement));
         }
         matcher.appendTail(expandedText);
         return expandedText.toString();

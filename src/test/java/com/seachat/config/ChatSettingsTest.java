@@ -139,12 +139,35 @@ public class ChatSettingsTest {
     }
 
     @Test
-    public void defaultsMissingOrInvalidDisabledColorsToWhite() {
+    public void defaultsMissingOrInvalidDisabledColorsToGray() {
         YamlConfiguration config = new YamlConfiguration();
-        assertEquals(NamedTextColor.WHITE, ChatSettings.from(config, new YamlConfiguration()).disabledChatColor());
-        for (String invalid : new String[]{"", "rainbow", "#12345", "#GGHHII", "<red>"}) {
+        assertEquals(NamedTextColor.GRAY, ChatSettings.from(config, new YamlConfiguration()).disabledChatColor());
+        for (String invalid : new String[]{"", "rainbow", "#12345", "#GGHHII", "%unknown_color%", "&l", "<bold>"}) {
             config.set("chat-format.disabled-color", invalid);
-            assertEquals(NamedTextColor.WHITE, ChatSettings.from(config, new YamlConfiguration()).disabledChatColor());
+            assertEquals(NamedTextColor.GRAY, ChatSettings.from(config, new YamlConfiguration()).disabledChatColor());
+        }
+    }
+
+    @Test
+    public void acceptsLegacyAndMiniMessageColorsAndUsesLastColorInSuffixText() {
+        Map<String, TextColor> values = Map.ofEntries(
+                Map.entry("white", NamedTextColor.WHITE),
+                Map.entry("&f", NamedTextColor.WHITE),
+                Map.entry("§f", NamedTextColor.WHITE),
+                Map.entry("&a[Rank] &f&l", NamedTextColor.WHITE),
+                Map.entry("&#AABBCC", TextColor.color(0xAABBCC)),
+                Map.entry("&x&A&A&B&B&C&C", TextColor.color(0xAABBCC)),
+                Map.entry("§x§a§a§b§b§c§c", TextColor.color(0xAABBCC)),
+                Map.entry("<white>", NamedTextColor.WHITE),
+                Map.entry("<color:white>", NamedTextColor.WHITE),
+                Map.entry("<#AABBCC>", TextColor.color(0xAABBCC)),
+                Map.entry("<red>[Rank]</red> &f", NamedTextColor.WHITE),
+                Map.entry("&c[Rank] <gray>", NamedTextColor.GRAY),
+                Map.entry("&c[Rank]&r", NamedTextColor.WHITE));
+        for (var entry : values.entrySet()) {
+            YamlConfiguration config = new YamlConfiguration();
+            config.set("chat-format.disabled-color", entry.getKey());
+            assertEquals(entry.getKey(), entry.getValue(), ChatSettings.from(config, new YamlConfiguration()).disabledChatColor());
         }
     }
 

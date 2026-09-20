@@ -23,7 +23,11 @@ public class ChatColorRendererTest {
     @Test
     public void recolorsOnlyOnDemandAndReusesOneCopyFor500Viewers() {
         ChatState state = new ChatState(false);
-        ChatColorRenderer renderer = new ChatColorRenderer(MESSAGE_ONLY, state, NamedTextColor.GRAY);
+        AtomicInteger colorResolutions = new AtomicInteger();
+        ChatColorRenderer renderer = new ChatColorRenderer(MESSAGE_ONLY, state, () -> {
+            colorResolutions.incrementAndGet();
+            return NamedTextColor.GRAY;
+        });
         AtomicInteger traversals = new AtomicInteger();
         Component message = countedMessage(traversals);
         Player source = player();
@@ -31,6 +35,7 @@ public class ChatColorRendererTest {
         assertSame(message, renderer.render(source, NAME, message, source));
         assertSame(message, renderer.render(source, NAME, message, Audience.empty()));
         assertEquals(0, traversals.get());
+        assertEquals(0, colorResolutions.get());
 
         state.toggleColors(source.getUniqueId());
         Component shared = renderer.render(source, NAME, message, source);
@@ -41,6 +46,7 @@ public class ChatColorRendererTest {
             assertSame(shared, renderer.render(source, NAME, message, viewer));
         }
         assertEquals(1, traversals.get());
+        assertEquals(1, colorResolutions.get());
 
         state.toggleColors(source.getUniqueId());
         assertSame(message, renderer.render(source, NAME, message, source));
@@ -49,7 +55,11 @@ public class ChatColorRendererTest {
     @Test
     public void concurrentViewersCreateOnlyOneReplacement() throws Exception {
         ChatState state = new ChatState(false);
-        ChatColorRenderer renderer = new ChatColorRenderer(MESSAGE_ONLY, state, NamedTextColor.GRAY);
+        AtomicInteger colorResolutions = new AtomicInteger();
+        ChatColorRenderer renderer = new ChatColorRenderer(MESSAGE_ONLY, state, () -> {
+            colorResolutions.incrementAndGet();
+            return NamedTextColor.GRAY;
+        });
         AtomicInteger traversals = new AtomicInteger();
         Component message = countedMessage(traversals);
         Player source = player();
@@ -68,6 +78,7 @@ public class ChatColorRendererTest {
             }
         }
         assertEquals(1, traversals.get());
+        assertEquals(1, colorResolutions.get());
     }
 
     @Test

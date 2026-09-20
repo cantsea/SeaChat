@@ -1,6 +1,7 @@
 package com.seachat.chat;
 
 import io.papermc.paper.chat.ChatRenderer;
+import java.util.function.Supplier;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -10,14 +11,19 @@ import org.bukkit.entity.Player;
 public final class ChatColorRenderer implements ChatRenderer {
     private final ChatRenderer delegate;
     private final ChatState state;
-    private final TextColor replacementColor;
+    private final Supplier<TextColor> replacementColorSupplier;
+    private TextColor replacementColor;
     private volatile MessageVariant messageVariant;
     private volatile RenderedVariant renderedVariant;
 
     public ChatColorRenderer(ChatRenderer delegate, ChatState state, TextColor replacementColor) {
+        this(delegate, state, () -> replacementColor);
+    }
+
+    public ChatColorRenderer(ChatRenderer delegate, ChatState state, Supplier<TextColor> replacementColorSupplier) {
         this.delegate = delegate;
         this.state = state;
-        this.replacementColor = replacementColor;
+        this.replacementColorSupplier = replacementColorSupplier;
     }
 
     @Override
@@ -42,6 +48,9 @@ public final class ChatColorRenderer implements ChatRenderer {
         synchronized (this) {
             cached = messageVariant;
             if (cached == null || cached.original() != original) {
+                if (replacementColor == null) {
+                    replacementColor = replacementColorSupplier.get();
+                }
                 cached = new MessageVariant(original, ChatColors.withoutColors(original, replacementColor));
                 messageVariant = cached;
             }

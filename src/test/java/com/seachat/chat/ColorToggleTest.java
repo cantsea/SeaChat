@@ -58,7 +58,7 @@ public class ColorToggleTest {
 
         assertTrue(state.areColorsDisabled(player.getUniqueId()));
         assertFalse(state.isHidden(player.getUniqueId()));
-        assertEquals(NamedTextColor.WHITE, state.forViewer(player, message).color());
+        assertEquals(NamedTextColor.GRAY, state.forViewer(player, message).color());
         assertSame(message, state.forViewer(other, message));
         assertSame(message, state.forViewer(Audience.empty(), message));
         assertEquals(settings.message("chat-colors-disabled"), responses.getLast());
@@ -175,7 +175,7 @@ public class ColorToggleTest {
 
         Component result = settings.privateChatMessage(sender, channel, "hello", true);
 
-        assertEquals(MiniMessage.miniMessage().deserialize("<red>[LOCAL] Alex: <white>hello</white> <blue>suffix").compact(),
+        assertEquals(MiniMessage.miniMessage().deserialize("<red>[LOCAL] Alex: <gray>hello</gray> <blue>suffix").compact(),
                 result.compact());
     }
 

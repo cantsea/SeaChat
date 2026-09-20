@@ -22,7 +22,7 @@ public class ChatColorsTest {
 
         Component result = ChatColors.withoutColors(message);
 
-        assertEquals(NamedTextColor.WHITE, result.color());
+        assertEquals(NamedTextColor.GRAY, result.color());
         assertNull(result.children().getFirst().color());
         assertEquals(TextDecoration.State.TRUE, result.decoration(TextDecoration.BOLD));
         assertEquals(message.children().getFirst().clickEvent(), result.children().getFirst().clickEvent());

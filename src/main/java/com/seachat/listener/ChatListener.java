@@ -96,7 +96,7 @@ public final class ChatListener implements Listener {
                 ? (source, sourceDisplayName, renderedMessage, viewer) ->
                         settings.chatMessage(source, sourceDisplayName, renderedMessage)
                 : event.renderer();
-        event.renderer(new ChatColorRenderer(renderer, state, settings.disabledChatColor()));
+        event.renderer(new ChatColorRenderer(renderer, state, () -> settings.disabledChatColor(player)));
     }
 
     private boolean shouldCancelForBadWord(String message) {

@@ -10,8 +10,9 @@ chat-format:
   format: "%luckperms_prefix%<reset>%cosmetics_title%<reset>%cosmetics_nickname_prefix%%cosmetics_nickname_color%%cosmetics_nickname% <%cosmetics_symbol_style_color%>» %luckperms_suffix%%cosmetics_chat_color%<message>"
 
   # Message text color for players who use /chat toggle colors to disable colors.
-  # Use a color name (e.g. gray) or a quoted hex color (e.g. "#AABBCC").
-  # Missing or invalid values use white. Apply changes with /chat reload.
+  # Use a color name (gray), hex ("#AABBCC"), legacy code ("&f"), or MiniMessage color ("<white>").
+  # A placeholder such as "%luckperms_suffix%" resolves for the sender; its last color code is used.
+  # Missing, empty, unresolved, or invalid colors use gray. Apply changes with /chat reload.
   disabled-color: "gray"
 
 slowmode:

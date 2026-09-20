@@ -11,7 +11,7 @@ public final class ChatColors {
     }
 
     public static Component withoutColors(Component message) {
-        return withoutColors(message, NamedTextColor.WHITE);
+        return withoutColors(message, NamedTextColor.GRAY);
     }
 
     public static Component withoutColors(Component message, TextColor replacementColor) {
