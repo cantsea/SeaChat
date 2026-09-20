@@ -78,13 +78,10 @@ public final class ChatSettings {
             Map.entry("blocked-caps", "{prefix} Please avoid sending messages in excessive caps."),
             Map.entry("filter-notify", "{prefix} <red><b>{player}'s message was blocked:</b></red> <gray>{message}</gray>"),
             Map.entry("inventory-display", "<green>{player}'s Inventory</green>"),
-            Map.entry("inventory-display-chat", "%luckperms_prefix%<reset> {player} » [<inventory>]"),
             Map.entry("inventory-display-hover", "<gray>Click to view this inventory.</gray>"),
             Map.entry("hand-display", "<green>{player}'s <item></green> <gray>x{amount}</gray>"),
-            Map.entry("hand-display-chat", "%luckperms_prefix%<reset> {player} » [<hand>]"),
             Map.entry("hand-display-hover", "<gray>Click to view this item.</gray>"),
             Map.entry("enderchest-display", "<green>{player}'s Ender Chest</green>"),
-            Map.entry("enderchest-display-chat", "%luckperms_prefix%<reset> {player} » [<enderchest>]"),
             Map.entry("enderchest-display-hover", "<gray>Click to view this ender chest.</gray>"),
             Map.entry("poll-created", "{prefix} New Poll created by <yellow>{creator}</yellow>! <white>{question}</white> Type <green>yes</green> or <red>no</red> in chat in the next <yellow>{seconds}</yellow> seconds to submit a response."),
             Map.entry("poll-already-active", "{prefix} There is already an active poll."),
@@ -314,21 +311,15 @@ public final class ChatSettings {
     }
 
     public Component inventoryChatMessage(Player player, Component inventory) {
-        return message(player, "inventory-display-chat",
-                Map.of("player", escape(player.getName())),
-                Map.of("inventory", inventory));
+        return chatMessage(player, player.displayName(), inventory);
     }
 
     public Component handChatMessage(Player player, Component hand) {
-        return message(player, "hand-display-chat",
-                Map.of("player", escape(player.getName())),
-                Map.of("hand", hand));
+        return chatMessage(player, player.displayName(), hand);
     }
 
     public Component enderChestChatMessage(Player player, Component enderChest) {
-        return message(player, "enderchest-display-chat",
-                Map.of("player", escape(player.getName())),
-                Map.of("enderchest", enderChest));
+        return chatMessage(player, player.displayName(), enderChest);
     }
 
     public long slowmodeCooldownMillis() {

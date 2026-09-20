@@ -1,121 +1,88 @@
-﻿
+# SeaChat language settings
+# Section headings are comments; message keys stay under messages.
+
+# Shared prefix
 prefix: "<#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b><#ffffff>"
 
 messages:
-  only-players-toggle: "{prefix} Only players can toggle their chat visibility."
 
-  only-players-toggle-colors: "{prefix} Only players can toggle chat colors."
-
-  no-permission-toggle-colors: "{prefix} You do not have permission to toggle chat colors."
-
-  chat-colors-disabled: "{prefix} Colors in player message text are now disabled for you."
-
-  chat-colors-enabled: "{prefix} Colors in player message text are now enabled for you."
-
-  no-permission-toggle: "{prefix} You do not have permission to toggle chat."
-
-  no-permission-inventory-display: "{prefix} You do not have permission to share your inventory in chat."
-
-  only-players-inventory-display: "{prefix} Only players can share their inventory in chat."
-
-  only-players-hand-display: "{prefix} Only players can share their held item in chat."
-
-  only-players-enderchest-display: "{prefix} Only players can share their ender chest in chat."
-
-  no-permission-hand-display: "{prefix} You do not have permission to share your held item in chat."
-
-  no-permission-enderchest-display: "{prefix} You do not have permission to share your ender chest in chat."
-
-  hand-empty: "{prefix} You are not holding an item."
-
-  chat-hidden: "{prefix} Public chat is now <red>hidden</red>."
-
-  chat-visible: "{prefix} Public chat is now <green>visible</green>."
-
-  chat-hidden-cannot-speak: "{prefix} Your chat is hidden, so you cannot speak in public chat. Use <yellow>/chat toggle</yellow> to use chat again."
-
-  no-permission-slowmode: "{prefix} You do not have permission to toggle slowmode."
-
-  slowmode-enabled: "{prefix} Slowmode is now <green>enabled</green>."
-
-  slowmode-disabled: "{prefix} Slowmode is now <red>disabled</red>."
-
+  # --- General commands ---
+  no-permission-command: "{prefix} You do not have permission to use SeaChat commands."
+  usage: "{prefix} Usage: <white>{usage}</white>"
   no-permission-reload: "{prefix} You do not have permission to reload SeaChat."
-
   reloaded: "{prefix} SeaChat has been reloaded."
 
-  no-permission-poll-create: "{prefix} You do not have permission to create or stop polls."
+  # --- Chat visibility ---
+  only-players-toggle: "{prefix} Only players can toggle their chat visibility."
+  no-permission-toggle: "{prefix} You do not have permission to toggle chat."
+  chat-hidden: "{prefix} Public chat is now <red>hidden</red>."
+  chat-visible: "{prefix} Public chat is now <green>visible</green>."
+  chat-hidden-cannot-speak: "{prefix} Your chat is hidden, so you cannot speak in public chat. Use <yellow>/chat toggle</yellow> to use chat again."
 
-  private-chat-no-permission: "{prefix} You do not have permission to use this private chat."
+  # --- Chat colors ---
+  only-players-toggle-colors: "{prefix} Only players can toggle chat colors."
+  no-permission-toggle-colors: "{prefix} You do not have permission to toggle chat colors."
+  chat-colors-disabled: "{prefix} Colors in player message text are now disabled for you."
+  chat-colors-enabled: "{prefix} Colors in player message text are now enabled for you."
 
-  private-chat-usage: "{prefix} Usage: <white>/{command} <message></white>"
+  # --- Slowmode ---
+  no-permission-slowmode: "{prefix} You do not have permission to toggle slowmode."
+  slowmode-enabled: "{prefix} Slowmode is now <green>enabled</green>."
+  slowmode-disabled: "{prefix} Slowmode is now <red>disabled</red>."
+  slowmode-wait: "{prefix} Slowmode is enabled. Wait <yellow>{seconds}</yellow> before chatting again."
 
-  private-chat-toggle-enabled: "{prefix} You are now chatting in <yellow>{chat}</yellow>. Use <yellow>/{command}</yellow> again to leave."
-
-  private-chat-toggle-disabled: "{prefix} You are no longer chatting in <yellow>{chat}</yellow>."
-
-  no-permission-announcement-trigger: "{prefix} You do not have permission to trigger announcements."
-
-  announcement-trigger-usage: "{prefix} Usage: <white>/chat announce tebex <player> <package></white> or <white>/chat announce test <announcement> [player] [package]</white>"
-
-  announcement-triggered: "{prefix} Triggered <yellow>{trigger}</yellow> announcement."
-
-  announcement-trigger-not-found: "{prefix} No enabled announcement trigger named <yellow>{trigger}</yellow> was found."
-
-  announcement-tested: "{prefix} Tested <yellow>{announcement}</yellow> announcement."
-
-  announcement-test-not-found: "{prefix} No enabled announcement named <yellow>{announcement}</yellow> was found."
-
-  no-permission-command: "{prefix} You do not have permission to use SeaChat commands."
-
-  usage: "{prefix} Usage: <white>{usage}</white>"
-
-  display-disabled: "{prefix} Display commands are currently disabled."
-
-  display-cooldown: "{prefix} Wait <yellow>{seconds}</yellow> before using another display command."
-
-  display-expired: "{prefix} That shared display has expired."
-
+  # --- Chat filters ---
   blocked-bad-word: "{prefix} Your message was blocked."
-
   blocked-caps: "{prefix} Please avoid sending messages in excessive caps."
-
   filter-notify: "{prefix} <red><b>{player}'s message was blocked:</b></red> <gray>{message}</gray>"
 
+  # --- Displays - shared messages ---
+  # Display layout uses chat-format.format in config.yml; labels and hover text are below.
+  display-disabled: "{prefix} Display commands are currently disabled."
+  display-cooldown: "{prefix} Wait <yellow>{seconds}</yellow> before using another display command."
+  display-expired: "{prefix} That shared display has expired."
+
+  # --- Displays - inventory ---
+  only-players-inventory-display: "{prefix} Only players can share their inventory in chat."
+  no-permission-inventory-display: "{prefix} You do not have permission to share your inventory in chat."
   inventory-display: "<green>{player}'s Inventory</green>"
-
-  inventory-display-chat: "%luckperms_prefix%<reset> {player} » [<inventory>]"
-
   inventory-display-hover: "<gray>Click to view this inventory.</gray>"
 
+  # --- Displays - held item ---
+  only-players-hand-display: "{prefix} Only players can share their held item in chat."
+  no-permission-hand-display: "{prefix} You do not have permission to share your held item in chat."
+  hand-empty: "{prefix} You are not holding an item."
   hand-display: "<green>{player}'s <item></green> <gray>x{amount}</gray>"
-
-  hand-display-chat: "%luckperms_prefix%<reset> {player} » [<hand>]"
-
   hand-display-hover: "<gray>Click to view this item.</gray>"
 
+  # --- Displays - ender chest ---
+  only-players-enderchest-display: "{prefix} Only players can share their ender chest in chat."
+  no-permission-enderchest-display: "{prefix} You do not have permission to share your ender chest in chat."
   enderchest-display: "<green>{player}'s Ender Chest</green>"
-
-  enderchest-display-chat: "%luckperms_prefix%<reset> {player} » [<enderchest>]"
-
   enderchest-display-hover: "<gray>Click to view this ender chest.</gray>"
 
+  # --- Private chat channels ---
+  private-chat-no-permission: "{prefix} You do not have permission to use this private chat."
+  private-chat-usage: "{prefix} Usage: <white>/{command} <message></white>"
+  private-chat-toggle-enabled: "{prefix} You are now chatting in <yellow>{chat}</yellow>. Use <yellow>/{command}</yellow> again to leave."
+  private-chat-toggle-disabled: "{prefix} You are no longer chatting in <yellow>{chat}</yellow>."
+
+  # --- Polls ---
+  no-permission-poll-create: "{prefix} You do not have permission to create or stop polls."
   poll-created: "{prefix} New Poll created by <yellow>{creator}</yellow>! <white>{question}</white> Type <green>yes</green> or <red>no</red> in chat in the next <yellow>{seconds}</yellow> seconds to submit a response."
-
   poll-already-active: "{prefix} There is already an active poll."
-
   poll-invalid-time: "{prefix} Poll time must be a positive number of seconds."
-
   poll-stopped: "{prefix} Poll stopped."
-
   poll-none-active: "{prefix} There is no active poll to stop."
-
   poll-response-counted: "{prefix} Your <yellow>{response}</yellow> response has been counted."
-
   poll-response-no-permission: "{prefix} You do not have permission to respond to polls."
-
   poll-ended: "{prefix} The poll has ended."
-
   poll-results: "{prefix} Poll results for <white>{question}</white>: <green>Yes: {yes}</green> <red>No: {no}</red> <gray>Total: {total}</gray>"
 
-  slowmode-wait: "{prefix} Slowmode is enabled. Wait <yellow>{seconds}</yellow> before chatting again."
+  # --- Announcements ---
+  no-permission-announcement-trigger: "{prefix} You do not have permission to trigger announcements."
+  announcement-trigger-usage: "{prefix} Usage: <white>/chat announce tebex <player> <package></white> or <white>/chat announce test <announcement> [player] [package]</white>"
+  announcement-triggered: "{prefix} Triggered <yellow>{trigger}</yellow> announcement."
+  announcement-trigger-not-found: "{prefix} No enabled announcement trigger named <yellow>{trigger}</yellow> was found."
+  announcement-tested: "{prefix} Tested <yellow>{announcement}</yellow> announcement."
+  announcement-test-not-found: "{prefix} No enabled announcement named <yellow>{announcement}</yellow> was found."

@@ -6,12 +6,13 @@ chat-format:
   enabled: true
 
   # PlaceholderAPI values can contain nested placeholders (up to 10 levels).
-  format: "%luckperms_prefix%<reset> {player} %luckperms_suffix% <message>"
+  # Hand, inventory, and ender chest displays use this format, with their clickable label in <message>.
+  format: "%luckperms_prefix%<reset>%cosmetics_title%<reset>%cosmetics_nickname_prefix%%cosmetics_nickname_color%%cosmetics_nickname% <%cosmetics_symbol_style_color%>» %luckperms_suffix%%cosmetics_chat_color%<message>"
 
   # Message text color for players who use /chat toggle colors to disable colors.
   # Use a color name (e.g. gray) or a quoted hex color (e.g. "#AABBCC").
   # Missing or invalid values use white. Apply changes with /chat reload.
-  disabled-color: "white"
+  disabled-color: "gray"
 
 slowmode:
   enabled: true
@@ -21,14 +22,14 @@ slowmode:
 display:
   enabled: true
 
-  cooldown-seconds: 10
+  cooldown-seconds: 30
 
   snapshots:
     enabled: true
 
-    expire-seconds: 300
+    expire-seconds: 60
 
-    cleanup-interval-seconds: 300
+    cleanup-interval-seconds: 120
 
 private-chats:
   local:
@@ -67,4 +68,3 @@ filters:
       - "retard"
       - "slut"
       - "whore"
-
