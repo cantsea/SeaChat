@@ -1,40 +1,87 @@
 ﻿
+# Announcement settings. The master switch is announcements.enabled in config.yml.
+# Apply changes with /chat reload. All times use the server's local time zone.
+# Each entry needs messages and at least one valid enabled schedule or trigger.
+# If both schedules are enabled, interval takes priority over defined-times.
 announcements:
-  example:
-    enabled: false
+  # Unique announcement ID. Copy an entry with a new ID to add announcements.
+  # /chat announce test etc broadcasts this entry to all online players.
+  etc:
+    # Enables this entire entry; false also prevents triggers and test broadcasts.
+    enabled: true
 
+    # Broadcast at specific times every day.
     defined-times:
-      enabled: true
+      # Enables the daily times below (only used when interval is disabled).
+      enabled: false
+      # Quoted 24-hour times: HH:mm or HH:mm:ss. HH:mm fires at second 00.
       times:
         - "09:00"
         - "13:30"
         - "20:00"
 
+    # Repeat broadcasts from a daily start time until the end of that day.
     interval:
-      enabled: false
-      start: "10:00"
-      interval-minutes: 30
+      # Enables the repeating schedule, overriding defined-times when true.
+      enabled: true
+      # Daily first broadcast time, not a delay after server startup.
+      start: "00:00"
+      # Positive whole minutes between broadcasts: here, 00:00, 00:02, 00:04, etc.
+      # Alternatively use interval-seconds or interval-hours. If multiple are set,
+      # the first positive value wins in this order: seconds, minutes, hours.
+      interval-minutes: 2
 
+    # Every line is sent in order to all online players on each broadcast.
+    # An empty string adds a blank line; messages are not randomly selected.
+    # MiniMessage tags set colors/styles: <white>, <#1E90FF>, <b>, and <reset>.
+    # <center> centers the line. PlaceholderAPI placeholders resolve per recipient
+    # when PlaceholderAPI is installed; {prefix} inserts the configured chat prefix.
     messages:
+      - ""
       - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
-      - "<center><gray>Join our Discord for updates and events."
+      - ""
+      - "<center><white>Join our <#1E90FF><b>/discord<reset><white> for updates and events!"
+      - "<center><white>Make sure to read our <#1E90FF><b>/rules<reset><white>!"
+      - "<center><white>Check out our <#1E90FF><b>/store<reset><white> for exlusive items and ranks!"
+      - "<center><white>Get FREE in-game rewards when you<#1E90FF><b>/vote<reset><white>!"
+      - ""
 
+  # A purchase announcement activated by a command rather than a schedule.
   tebex-purchase:
+    # Enables this entire announcement, including its trigger.
     enabled: true
 
+    # Triggers can be used alongside either schedule, or on their own.
     trigger:
+      # Allows this entry to respond to the named trigger.
       enabled: true
+      # Case-insensitive trigger name. The Tebex command uses "tebex-purchase":
+      # /chat announce tebex <player> <package>
+      # Configure your store to run that command after a purchase.
       name: "tebex-purchase"
 
     defined-times:
+      # Disabled for purchases; an empty list means no daily broadcast times.
       enabled: false
       times: []
 
     interval:
+      # Disabled for purchases; start and interval-minutes are inactive below.
       enabled: false
+      # Daily first broadcast time if the interval schedule is enabled.
       start: "10:00"
+      # Minutes between broadcasts if the interval schedule is enabled.
       interval-minutes: 30
 
+    # Same line order and formatting rules as above.
+    # The Tebex/test commands supply {player} and {package}; {package_name} is
+    # another name for {package}. Scheduled broadcasts do not supply these values.
+    # Test with: /chat announce test tebex-purchase PlayerName Example Package
+    # This test broadcasts to all online players too.
     messages:
+      - ""
       - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
       - "<center><yellow>{player}</yellow> <gray>just purchased</gray> <green>{package}</green><gray>!"
+      - ""
+      - "<white>Thank you for supporting us on our <#1E90FF><b>/store<reset><white>!"
+      - ""
