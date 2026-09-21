@@ -4,6 +4,7 @@ import com.seachat.announcement.AnnouncementManager;
 import com.seachat.chat.ChatState;
 import com.seachat.command.ChatCommand;
 import com.seachat.config.ChatSettings;
+import com.seachat.customcommand.CustomCommandManager;
 import com.seachat.display.InventoryDisplayManager;
 import com.seachat.listener.ChatListener;
 import com.seachat.listener.CommandRefreshListener;
@@ -25,12 +26,16 @@ public final class SeaChat extends JavaPlugin {
     private PollManager pollManager;
     private PrivateChatManager privateChatManager;
     private AnnouncementManager announcementManager;
+    private CustomCommandManager customCommandManager;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         saveResource("lang.yml", false);
         saveResource("announcements.yml", false);
+        if (!new File(getDataFolder(), "custom-commands.yml").exists()) {
+            saveResource("custom-commands.yml", false);
+        }
         reloadLang();
 
         this.settings = ChatSettings.from(getConfig(), langConfig);
@@ -47,6 +52,8 @@ public final class SeaChat extends JavaPlugin {
         this.pollManager = new PollManager(this, settings, state);
         this.privateChatManager = new PrivateChatManager(this, settings, state);
         this.privateChatManager.reloadChannels();
+        this.customCommandManager = new CustomCommandManager(this, settings);
+        this.customCommandManager.reload();
         this.announcementManager = new AnnouncementManager(this, settings);
         this.announcementManager.reload();
         ChatCommand commandHandler = new ChatCommand(
@@ -66,6 +73,7 @@ public final class SeaChat extends JavaPlugin {
                 new ChatListener(this, settings, state, pollManager, privateChatManager), this);
         getServer().getPluginManager().registerEvents(inventoryDisplayManager, this);
         getServer().getPluginManager().registerEvents(privateChatManager, this);
+        getServer().getPluginManager().registerEvents(customCommandManager, this);
         getServer().getPluginManager().registerEvents(new CommandVisibilityListener(settings, privateChatManager), this);
         getServer().getPluginManager().registerEvents(new CommandRefreshListener(), this);
 
@@ -88,6 +96,9 @@ public final class SeaChat extends JavaPlugin {
         if (announcementManager != null) {
             announcementManager.shutdown();
         }
+        if (customCommandManager != null) {
+            customCommandManager.shutdown();
+        }
     }
 
     public void reloadSettings() {
@@ -96,7 +107,10 @@ public final class SeaChat extends JavaPlugin {
         this.settings.copyFrom(ChatSettings.from(getConfig(), langConfig));
         this.state.setSlowmodeEnabled(settings.slowmodeEnabled());
         this.inventoryDisplayManager.reloadCleanupTask();
+        // Release old labels before private chats and custom commands reclaim them.
+        this.customCommandManager.shutdown();
         this.privateChatManager.reloadChannels();
+        this.customCommandManager.reload();
         this.announcementManager.reload();
         refreshCommands();
     }

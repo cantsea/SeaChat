@@ -2,6 +2,12 @@
 # Apply changes with /chat reload. All times use the server's local time zone.
 # Each entry needs messages and at least one valid enabled schedule or trigger.
 # If both schedules are enabled, interval takes priority over defined-times.
+# Clickable words are supported in any message, including centered lines:
+# "<center><click:open_url:'https://discord.gg/YOUR_INVITE'><aqua>Discord</aqua></click>"
+# Replace YOUR_INVITE with your invite. Only Discord is shown; clicking opens the URL.
+# Optional hover text goes inside the click tag: <hover:show_text:'Click to join!'>Discord</hover>
+# Use full https:// URLs. Close </click> before text that should not be clickable.
+# MiniMessage reference: https://docs.papermc.io/adventure/minimessage/format/
 announcements:
   # Unique announcement ID. Copy an entry with a new ID to add announcements.
   # /chat announce test etc broadcasts this entry to all online players.

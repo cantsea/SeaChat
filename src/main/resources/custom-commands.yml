@@ -1,0 +1,43 @@
+# Custom commands send all their message lines only to the player who runs them.
+# Add or copy entries below; the entry name is the command without its slash.
+# Use letters, numbers, hyphens or underscores. Command names ignore letter case.
+# Commands already owned by another feature/plugin are skipped with a log warning.
+# Apply changes (including adding/removing commands) with /chat reload.
+# These commands work independently of the announcements.enabled master switch.
+#
+# Messages support the same MiniMessage colors, styles and <center> as announcements.
+# {player} is the player's name; {prefix} is the prefix from lang.yml.
+# PlaceholderAPI placeholders resolve for that player when PlaceholderAPI is installed.
+# An empty string adds a blank line. Every line is sent in order on each use.
+#
+# Clickable links show the label between the tags, not the URL:
+# <click:open_url:'https://discord.gg/YOUR_INVITE'>Discord</click>
+# Add hover text with <hover:show_text:'Click to join!'>Discord</hover> inside the click tag.
+# Use a full https:// URL. Replace YOUR_INVITE with your real Discord invite.
+# MiniMessage reference: https://docs.papermc.io/adventure/minimessage/format/
+commands:
+  # Example /discord command. Enable it after replacing the example invite below.
+  discord:
+    enabled: true
+    # Empty means everyone can use it. Otherwise require a permission of your choice,
+    # such as "seachat.command.discord", granted through your permissions plugin.
+    permission: ""
+    messages:
+      - ""
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - ""
+      - "<center><click:open_url:'https://discord.gg/saltymc'><hover:show_text:'Click to join our Discord!'><white>Click to join our <#1E90FF><b>Discord<reset><white>!"
+      - ""
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - ""
+  store:
+    enabled: true
+    permission: ""
+    messages:
+      - ""
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - ""
+      - "<center><click:open_url:'https://store.saltymc.org'><hover:show_text:'Click to visit our Store!'><white>Click to view our <#1E90FF><b>Store<reset><white>!"
+      - ""
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - ""

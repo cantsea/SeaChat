@@ -50,6 +50,8 @@ public final class ChatSettings {
     private static final String DEFAULT_PREFIX = "<#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b><#ffffff>";
     private static final String DEFAULT_CHAT_FORMAT = "%luckperms_prefix%<reset> {player} %luckperms_suffix% <message>";
     private static final Map<String, String> DEFAULT_MESSAGES = Map.ofEntries(
+            Map.entry("custom-command-only-players", "{prefix} Only players can use this command."),
+            Map.entry("custom-command-no-permission", "{prefix} You do not have permission to use this command."),
             Map.entry("only-players-toggle", "{prefix} Only players can toggle their chat visibility."),
             Map.entry("only-players-toggle-colors", "{prefix} Only players can toggle chat colors."),
             Map.entry("no-permission-toggle-colors", "{prefix} You do not have permission to toggle chat colors."),
@@ -276,6 +278,11 @@ public final class ChatSettings {
 
     public Component announcementMessage(Player player, String template, Map<String, String> placeholders) {
         return renderTemplate(player, template, placeholders, Map.of(), true);
+    }
+
+    public Component customCommandMessage(Player player, String template) {
+        return renderTemplate(player, template,
+                Map.of("player", escape(player.getName())), Map.of(), true);
     }
 
     private Component renderTemplate(

@@ -12,6 +12,10 @@ messages:
   no-permission-reload: "{prefix} You do not have permission to reload SeaChat."
   reloaded: "{prefix} SeaChat has been reloaded."
 
+  # --- Custom message commands ---
+  custom-command-only-players: "{prefix} Only players can use this command."
+  custom-command-no-permission: "{prefix} You do not have permission to use this command."
+
   # --- Chat visibility ---
   only-players-toggle: "{prefix} Only players can toggle their chat visibility."
   no-permission-toggle: "{prefix} You do not have permission to toggle chat."
