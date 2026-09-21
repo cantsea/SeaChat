@@ -65,7 +65,7 @@ commands:
   store:
     enabled: true
     type: chat
-    aliases: []
+    aliases: [buy]
     permission: ""
     messages:
       - ""
