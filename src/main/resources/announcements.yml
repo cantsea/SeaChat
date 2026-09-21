@@ -42,7 +42,7 @@ announcements:
       - "<center><white>Join our <#1E90FF><b>/discord<reset><white> for updates and events!"
       - "<center><white>Make sure to read our <#1E90FF><b>/rules<reset><white>!"
       - "<center><white>Check out our <#1E90FF><b>/store<reset><white> for exlusive items and ranks!"
-      - "<center><white>Get FREE in-game rewards when you<#1E90FF><b>/vote<reset><white>!"
+      - "<center><white>Get FREE in-game rewards when you <#1E90FF><b>/vote<reset><white>!"
       - ""
 
   # A purchase announcement activated by a command rather than a schedule.
