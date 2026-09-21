@@ -108,13 +108,13 @@ commands:
       - ""
 
   # Player commands: shortcuts to commands provided by other plugins.
-  guide:
+  help:
     enabled: true
     type: player
-    aliases: [help, guide]
+    aliases: []
     permission: ""
     commands:
-      - "dm open information-help"
+      - "guide"
 
   sleep:
     enabled: true
