@@ -5,6 +5,7 @@ import com.seachat.chat.ChatState;
 import com.seachat.command.ChatCommand;
 import com.seachat.config.ChatSettings;
 import com.seachat.customcommand.CustomCommandManager;
+import com.seachat.customcommand.CommandPriorityListener;
 import com.seachat.display.InventoryDisplayManager;
 import com.seachat.listener.ChatListener;
 import com.seachat.listener.CommandRefreshListener;
@@ -74,6 +75,9 @@ public final class SeaChat extends JavaPlugin {
         getServer().getPluginManager().registerEvents(inventoryDisplayManager, this);
         getServer().getPluginManager().registerEvents(privateChatManager, this);
         getServer().getPluginManager().registerEvents(customCommandManager, this);
+        CommandPriorityListener commandPriorityListener = new CommandPriorityListener(this, customCommandManager);
+        getServer().getPluginManager().registerEvents(commandPriorityListener, this);
+        commandPriorityListener.scheduleRefresh();
         getServer().getPluginManager().registerEvents(new CommandVisibilityListener(settings, privateChatManager), this);
         getServer().getPluginManager().registerEvents(new CommandRefreshListener(), this);
 
@@ -90,14 +94,15 @@ public final class SeaChat extends JavaPlugin {
         if (pollManager != null) {
             pollManager.shutdown();
         }
+        // Restore displaced labels before their owning features unregister them.
+        if (customCommandManager != null) {
+            customCommandManager.shutdown();
+        }
         if (privateChatManager != null) {
             privateChatManager.shutdown();
         }
         if (announcementManager != null) {
             announcementManager.shutdown();
-        }
-        if (customCommandManager != null) {
-            customCommandManager.shutdown();
         }
     }
 

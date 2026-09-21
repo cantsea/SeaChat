@@ -1,43 +1,133 @@
-# Custom commands send all their message lines only to the player who runs them.
-# Add or copy entries below; the entry name is the command without its slash.
-# Use letters, numbers, hyphens or underscores. Command names ignore letter case.
-# Commands already owned by another feature/plugin are skipped with a log warning.
-# Apply changes (including adding/removing commands) with /chat reload.
-# These commands work independently of the announcements.enabled master switch.
+# SeaChat custom commands
+# Edit this file in the plugin folder, then apply changes with /chat reload.
+# These commands work independently of announcements.enabled in config.yml.
 #
-# Messages support the same MiniMessage colors, styles and <center> as announcements.
-# {player} is the player's name; {prefix} is the prefix from lang.yml.
-# PlaceholderAPI placeholders resolve for that player when PlaceholderAPI is installed.
-# An empty string adds a blank line. Every line is sent in order on each use.
+# Names, aliases and permissions
+# Each entry name is its command without the slash: discord creates /discord.
+# Names and aliases ignore case; use letters, numbers, hyphens or underscores.
+# enabled: false disables the entry and all its aliases.
+# aliases: [dc, disc] adds /dc and /disc; [] means no extra names.
+# Repeated aliases and aliases matching their own command name are ignored.
+# permission: "" allows everyone; otherwise specify a permission players must have.
 #
-# Clickable links show the label between the tags, not the URL:
-# <click:open_url:'https://discord.gg/YOUR_INVITE'>Discord</click>
-# Add hover text with <hover:show_text:'Click to join!'>Discord</hover> inside the click tag.
-# Use a full https:// URL. Replace YOUR_INVITE with your real Discord invite.
-# MiniMessage reference: https://docs.papermc.io/adventure/minimessage/format/
+# Command types
+# chat (the default): sends every line in messages only to the invoking player.
+# player: runs every line in commands as that player, with their normal permissions.
+# console: runs every line in commands with console privileges; permission controls access.
+# All types must be triggered by a player. Only the list for the selected type is used.
+#
+# Chat messages
+# MiniMessage colors/styles and <center> work as they do in announcements.
+# "" adds a blank chat line. {player} is the player's name; {prefix} comes from lang.yml.
+# PlaceholderAPI placeholders resolve for the recipient when PlaceholderAPI is installed.
+# Clickable label: <click:open_url:'https://example.com'>Visit website</click>
+# Hover text: <hover:show_text:'Click to open!'>Visit website</hover>
+# Nest the hover tag inside the click tag to combine them. Close </hover> and </click>
+# before text that should not be interactive. Use a full https:// URL for links.
+# Formatting reference: https://docs.papermc.io/adventure/minimessage/format/
+#
+# Player and console actions
+# Commands run in list order. A leading slash is optional; blank entries are ignored.
+# {player} is replaced with the invoking player's name. Typed arguments are not forwarded.
+# MiniMessage and PlaceholderAPI are not processed in command actions.
+# The target command/plugin must exist. Player actions still require its permissions.
+# A dispatch failure stops remaining actions; recursive custom command calls are blocked.
+#
+# Conflicts
+# override-existing defaults to true: SeaChat takes over conflicting command names and aliases.
+# Other plugins' own namespaced commands (such as /essentials:fly) remain available.
+# Displaced commands are restored when a SeaChat entry is removed/disabled or SeaChat stops.
+# Set false to skip conflicting names/aliases instead. An entry can set override-existing
+# to override this file-wide default. Changes apply with /chat reload.
+# Enabled, valid primary names take priority over aliases within this file.
+# If two entries request the same alias, the first successfully registered entry wins.
+
+override-existing: true
+
 commands:
-  # Example /discord command. Enable it after replacing the example invite below.
+
+  # Chat messages: server links shown only to the player who runs the command.
   discord:
     enabled: true
-    # Empty means everyone can use it. Otherwise require a permission of your choice,
-    # such as "seachat.command.discord", granted through your permissions plugin.
+    type: chat
+    aliases: []
     permission: ""
     messages:
       - ""
       - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
       - ""
-      - "<center><click:open_url:'https://discord.gg/saltymc'><hover:show_text:'Click to join our Discord!'><white>Click to join our <#1E90FF><b>Discord<reset><white>!"
+      - "<center><white>Join our Discord to stay up-to-date with"
+      - "<center><white>announcements, events, giveaways, and more!"
       - ""
-      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - "<center><click:open_url:'https://discord.gg/saltymc'><hover:show_text:'Click to join our Discord!'><#ffffff><b>[<#1E90FF>CLICK TO VIEW<#ffffff>]</b><reset><white>"
       - ""
+
   store:
     enabled: true
+    type: chat
+    aliases: []
     permission: ""
     messages:
       - ""
       - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
       - ""
-      - "<center><click:open_url:'https://store.saltymc.org'><hover:show_text:'Click to visit our Store!'><white>Click to view our <#1E90FF><b>Store<reset><white>!"
+      - "<center><white>SaltyMC is 100% community funded."
+      - "<center><white>Purchase items to help support the server!"
+      - ""
+      - "<center><click:open_url:'https://store.saltymc.org'><hover:show_text:'Click to visit our Store!'><#ffffff><b>[<#1E90FF>CLICK TO VIEW<#ffffff>]</b><reset><white>"
+      - ""
+
+  map:
+    enabled: true
+    type: chat
+    aliases: []
+    permission: ""
+    messages:
       - ""
       - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
       - ""
+      - "<center><white>View the world live in your browser!"
+      - "<center><white>See player locations, builds, and terrain in real time."
+      - ""
+      - "<center><click:open_url:'https://map.saltymc.org/survival/'><hover:show_text:'Click to view the map!'><#ffffff><b>[<#1E90FF>CLICK TO VIEW<#ffffff>]</b><reset><white>"
+      - ""
+
+  vote:
+    enabled: true
+    type: chat
+    aliases: []
+    permission: ""
+    messages:
+      - ""
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - ""
+      - "<center><white>Vote for SaltyMC using the link below to"
+      - "<center><white>support the server and receive rewards!"
+      - ""
+      - "<center><click:open_url:'https://store.saltymc.org/vote'><hover:show_text:'Click to vote!'><#ffffff><b>[<#1E90FF>CLICK TO VIEW<#ffffff>]</b><reset><white>"
+      - ""
+
+  # Player commands: shortcuts to commands provided by other plugins.
+  guide:
+    enabled: true
+    type: player
+    aliases: [help, guide]
+    permission: ""
+    commands:
+      - "dm open information-help"
+
+  sleep:
+    enabled: true
+    type: player
+    aliases: []
+    permission: ""
+    commands:
+      - "sm sleep"
+
+  fly:
+    enabled: true
+    type: player
+    aliases: []
+    permission: ""
+    commands:
+      - "tf"

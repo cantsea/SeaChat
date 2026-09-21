@@ -15,6 +15,8 @@ messages:
   # --- Custom message commands ---
   custom-command-only-players: "{prefix} Only players can use this command."
   custom-command-no-permission: "{prefix} You do not have permission to use this command."
+  custom-command-failed: "{prefix} A configured command could not be run."
+  custom-command-recursion: "{prefix} This custom command was stopped because it creates a loop."
 
   # --- Chat visibility ---
   only-players-toggle: "{prefix} Only players can toggle their chat visibility."

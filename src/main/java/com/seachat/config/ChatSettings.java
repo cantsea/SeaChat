@@ -52,6 +52,8 @@ public final class ChatSettings {
     private static final Map<String, String> DEFAULT_MESSAGES = Map.ofEntries(
             Map.entry("custom-command-only-players", "{prefix} Only players can use this command."),
             Map.entry("custom-command-no-permission", "{prefix} You do not have permission to use this command."),
+            Map.entry("custom-command-failed", "{prefix} A configured command could not be run."),
+            Map.entry("custom-command-recursion", "{prefix} This custom command was stopped because it creates a loop."),
             Map.entry("only-players-toggle", "{prefix} Only players can toggle their chat visibility."),
             Map.entry("only-players-toggle-colors", "{prefix} Only players can toggle chat colors."),
             Map.entry("no-permission-toggle-colors", "{prefix} You do not have permission to toggle chat colors."),
