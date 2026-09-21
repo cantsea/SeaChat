@@ -1,5 +1,4 @@
-﻿
-# Announcement settings. The master switch is announcements.enabled in config.yml.
+﻿# Announcement settings. The master switch is announcements.enabled in config.yml.
 # Apply changes with /chat reload. All times use the server's local time zone.
 # Each entry needs messages and at least one valid enabled schedule or trigger.
 # If both schedules are enabled, interval takes priority over defined-times.
