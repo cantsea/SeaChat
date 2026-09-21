@@ -80,7 +80,8 @@ announcements:
     messages:
       - ""
       - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
-      - "<center><yellow>{player}</yellow> <gray>just purchased</gray> <green>{package}</green><gray>!"
       - ""
-      - "<white>Thank you for supporting us on our <#1E90FF><b>/store<reset><white>!"
+      - "<center><yellow>{player}</yellow> <white>just purchased</white> <green>{package}</green><gray>!"
+      - ""
+      - "<center><white>Thank you for supporting us on our <#1E90FF><b>/store<reset><white>!"
       - ""
