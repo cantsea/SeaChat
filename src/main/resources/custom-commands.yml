@@ -59,7 +59,7 @@ commands:
       - "<center><white>Join our Discord to stay up-to-date with"
       - "<center><white>announcements, events, giveaways, and more!"
       - ""
-      - "<center><click:open_url:'https://discord.gg/saltymc'><hover:show_text:'Click to join our Discord!'><#ffffff><b>[<#1E90FF>CLICK TO VIEW<#ffffff>]</b><reset><white>"
+      - "<center><click:open_url:'https://discord.gg/saltymc'><hover:show_text:'Click to join our Discord!'><#ffffff><b>[<#1E90FF>discord.gg/saltymc<#ffffff>]</b><reset><white>"
       - ""
 
   store:
@@ -74,7 +74,7 @@ commands:
       - "<center><white>SaltyMC is 100% community funded."
       - "<center><white>Purchase items to help support the server!"
       - ""
-      - "<center><click:open_url:'https://store.saltymc.org'><hover:show_text:'Click to visit our Store!'><#ffffff><b>[<#1E90FF>CLICK TO VIEW<#ffffff>]</b><reset><white>"
+      - "<center><click:open_url:'https://store.saltymc.org'><hover:show_text:'Click to visit our Store!'><#ffffff><b>[<#1E90FF>store.saltymc.org<#ffffff>]</b><reset><white>"
       - ""
 
   map:
@@ -89,7 +89,7 @@ commands:
       - "<center><white>View the world live in your browser!"
       - "<center><white>See player locations, builds, and terrain in real time."
       - ""
-      - "<center><click:open_url:'https://map.saltymc.org/survival/'><hover:show_text:'Click to view the map!'><#ffffff><b>[<#1E90FF>CLICK TO VIEW<#ffffff>]</b><reset><white>"
+      - "<center><click:open_url:'https://map.saltymc.org/survival/'><hover:show_text:'Click to view the map!'><#ffffff><b>[<#1E90FF>map.saltymc.org<#ffffff>]</b><reset><white>"
       - ""
 
   vote:
@@ -104,7 +104,7 @@ commands:
       - "<center><white>Vote for SaltyMC using the link below to"
       - "<center><white>support the server and receive rewards!"
       - ""
-      - "<center><click:open_url:'https://store.saltymc.org/vote'><hover:show_text:'Click to vote!'><#ffffff><b>[<#1E90FF>CLICK TO VIEW<#ffffff>]</b><reset><white>"
+      - "<center><click:open_url:'https://store.saltymc.org/vote'><hover:show_text:'Click to vote!'><#ffffff><b>[<#1E90FF>store.saltymc.org/vote<#ffffff>]</b><reset><white>"
       - ""
 
   # Player commands: shortcuts to commands provided by other plugins.

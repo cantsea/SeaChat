@@ -19,7 +19,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -29,13 +28,11 @@ import org.bukkit.entity.Player;
 
 public final class ChatSettings {
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-    private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
     private static final Pattern PLACEHOLDER_API_PATTERN = Pattern.compile("%[^%\\s]+%");
     private static final Pattern DISABLED_COLOR_PATTERN = Pattern.compile(
             "(?i)[&§]x(?:[&§][0-9a-f]){6}|[&§]#[0-9a-f]{6}|[&§][0-9a-fr]"
                     + "|<(?:color:|colour:|c:)?(?:#[0-9a-f]{6}|[a-z_]+)>");
     private static final int MAX_PLACEHOLDER_DEPTH = 10;
-    private static final Pattern CENTER_TAG_PATTERN = Pattern.compile("(?i)</?center\\s*/?>");
     private static final Pattern MINI_MESSAGE_TAG_PATTERN =
             Pattern.compile("(?i)</?(?:#[0-9a-f]{6}|[a-z][a-z0-9_-]*)(?::[^<>]*)?/?>");
     private static final LegacyComponentSerializer PLACEHOLDER_LEGACY_SERIALIZER =
@@ -313,7 +310,7 @@ public final class ChatSettings {
                 .map(entry -> Placeholder.component(entry.getKey(), entry.getValue()))
                 .toArray(TagResolver[]::new);
         if (centerLines) {
-            template = centerLines(template, resolvers);
+            return CenteredText.render(template, resolvers);
         }
         return MINI_MESSAGE.deserialize(template, resolvers);
     }
@@ -594,55 +591,4 @@ public final class ChatSettings {
         return text;
     }
 
-    private static String centerLines(String template, TagResolver[] resolvers) {
-        if (!CENTER_TAG_PATTERN.matcher(template).find()) {
-            return template;
-        }
-
-        String[] lines = template.split("\\R", -1);
-        StringBuilder centered = new StringBuilder(template.length());
-        for (int index = 0; index < lines.length; index++) {
-            if (index > 0) {
-                centered.append('\n');
-            }
-
-            String line = lines[index];
-            if (!CENTER_TAG_PATTERN.matcher(line).find()) {
-                centered.append(line);
-                continue;
-            }
-
-            String content = CENTER_TAG_PATTERN.matcher(line).replaceAll("");
-            centered.append(" ".repeat(centerSpaceCount(content, resolvers))).append(content);
-        }
-        return centered.toString();
-    }
-
-    private static int centerSpaceCount(String miniMessageLine, TagResolver[] resolvers) {
-        String plainText;
-        try {
-            plainText = PLAIN_TEXT.serialize(MINI_MESSAGE.deserialize(miniMessageLine, resolvers));
-        } catch (RuntimeException exception) {
-            plainText = miniMessageLine.replaceAll("<[^>]+>", "");
-        }
-
-        int width = 0;
-        for (int index = 0; index < plainText.length(); index++) {
-            width += characterWidth(plainText.charAt(index));
-        }
-
-        int spaces = (154 - (width / 2)) / 4;
-        return Math.max(0, spaces);
-    }
-
-    private static int characterWidth(char character) {
-        return switch (character) {
-            case ' ', '\u00A0' -> 4;
-            case '!', '.', ',', ':', ';', '|', 'i', '\'' -> 2;
-            case '`', 'l' -> 3;
-            case '"', '(', ')', '[', ']', '{', '}', 'I', 't' -> 4;
-            case '<', '>', 'f', 'k' -> 5;
-            default -> 6;
-        };
-    }
 }

@@ -11,9 +11,9 @@
 announcements:
   # Unique announcement ID. Copy an entry with a new ID to add announcements.
   # /chat announce test etc broadcasts this entry to all online players.
-  etc:
+  example:
     # Enables this entire entry; false also prevents triggers and test broadcasts.
-    enabled: true
+    enabled: false
 
     # Broadcast at specific times every day.
     defined-times:
@@ -50,6 +50,107 @@ announcements:
       - "<center><white>Make sure to read our <#1E90FF><b>/rules<reset><white>!"
       - "<center><white>Check out our <#1E90FF><b>/store<reset><white> for exlusive items and ranks!"
       - "<center><white>Get FREE in-game rewards when you <#1E90FF><b>/vote<reset><white>!"
+      - ""
+
+  help:
+    enabled: true
+    defined-times:
+      enabled: false
+      times:
+        - "09:00"
+    interval:
+      enabled: true
+      start: "00:00"
+      interval-minutes: 10
+    messages:
+      - ""
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - ""
+      - "<center><white>Use <#1E90FF><b>/help<reset><white> for server information!"
+      - "<center><white>This guide contains information about"
+      - "<center><white>SaltyMC Survival's features!"
+      - ""
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - ""
+
+  discord:
+    enabled: true
+    defined-times:
+      enabled: false
+      times:
+        - "09:00"
+    interval:
+      enabled: true
+      start: "00:02"
+      interval-minutes: 10
+    messages:
+      - ""
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - ""
+      - "<center><white>Join our Discord to stay up-to-date with"
+      - "<center><white>announcements, events, giveaways, and more!"
+      - ""
+      - "<center><click:open_url:'https://discord.gg/saltymc'><hover:show_text:'Click to join our Discord!'><#ffffff><b>[<#1E90FF>discord.gg/saltymc<#ffffff>]</b><reset><white>"
+      - ""
+
+  rules:
+    enabled: true
+    defined-times:
+      enabled: false
+      times:
+        - "09:00"
+    interval:
+      enabled: true
+      start: "00:04"
+      interval-minutes: 10
+    messages:
+      - ""
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - ""
+      - "<center><white>Read our <#1E90FF><b>/rules<reset><white> to"
+      - "<center><white>help keep the server safe!"
+      - ""
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - ""
+
+  store:
+    enabled: true
+    defined-times:
+      enabled: false
+      times:
+        - "09:00"
+    interval:
+      enabled: true
+      start: "00:06"
+      interval-minutes: 10
+    messages:
+      - ""
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - ""
+      - "<center><white>SaltyMC is 100% community funded."
+      - "<center><white>Purchase items to help support the server!"
+      - ""
+      - "<center><click:open_url:'https://store.saltymc.org'><hover:show_text:'Click to visit our Store!'><#ffffff><b>[<#1E90FF>store.saltymc.org<#ffffff>]</b><reset><white>"
+      - ""
+
+  vote:
+    enabled: true
+    defined-times:
+      enabled: false
+      times:
+        - "09:00"
+    interval:
+      enabled: true
+      start: "00:08"
+      interval-minutes: 10
+    messages:
+      - ""
+      - "<center><#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b>"
+      - ""
+      - "<center><white>Vote for SaltyMC using the link below to"
+      - "<center><white>support the server and receive rewards!"
+      - ""
+      - "<center><click:open_url:'https://store.saltymc.org/vote'><hover:show_text:'Click to vote!'><#ffffff><b>[<#1E90FF>store.saltymc.org/vote<#ffffff>]</b><reset><white>"
       - ""
 
   # A purchase announcement activated by a command rather than a schedule.
