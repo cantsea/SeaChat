@@ -28,6 +28,7 @@ public final class PrivateChatManager implements Listener {
     private final SeaChat plugin;
     private final ChatSettings settings;
     private final ChatState state;
+    private final PrivateChatRelay relay;
     private final Map<String, PrivateChatCommand> registeredCommands = new HashMap<>();
     private final ConcurrentMap<UUID, String> toggledChannels = new ConcurrentHashMap<>();
     private volatile Map<String, PrivateChatChannel> activeChannels = Map.of();
@@ -36,6 +37,11 @@ public final class PrivateChatManager implements Listener {
         this.plugin = plugin;
         this.settings = settings;
         this.state = state;
+        this.relay = new PrivateChatRelay(plugin, settings, state, toggledChannels::remove);
+    }
+
+    public void startRelay() {
+        relay.start();
     }
 
     public void reloadChannels() {
@@ -89,12 +95,14 @@ public final class PrivateChatManager implements Listener {
     }
 
     public void shutdown() {
+        relay.close();
         toggledChannels.clear();
         activeChannels = Map.of();
         unregisterChannels();
     }
 
     public boolean handleToggledChat(Player player, String message) {
+        if (relay.handleToggledChat(player, message)) return true;
         String channelId = toggledChannels.get(player.getUniqueId());
         if (channelId == null) {
             return false;
@@ -127,6 +135,7 @@ public final class PrivateChatManager implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
+        relay.onQuit(event.getPlayer().getUniqueId());
         toggledChannels.remove(event.getPlayer().getUniqueId());
     }
 
@@ -181,6 +190,7 @@ public final class PrivateChatManager implements Listener {
     }
 
     private void toggleChannel(Player player, PrivateChatChannel channel) {
+        relay.leaveForLocalChannel(player);
         String previousChannel = toggledChannels.put(player.getUniqueId(), channel.id());
         boolean disabled = channel.id().equals(previousChannel);
         if (disabled) {

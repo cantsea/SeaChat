@@ -68,6 +68,7 @@ messages:
   enderchest-display-hover: "<gray>Click to view this ender chest.</gray>"
 
   # --- Private chat channels ---
+  private-chat-proxy-unavailable: "{prefix} Your private message could not be confirmed. Use /seachatproxy leave to return to public chat."
   private-chat-no-permission: "{prefix} You do not have permission to use this private chat."
   private-chat-usage: "{prefix} Usage: <white>/{command} <message></white>"
   private-chat-toggle-enabled: "{prefix} You are now chatting in <yellow>{chat}</yellow>. Use <yellow>/{command}</yellow> again to leave."

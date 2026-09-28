@@ -1,0 +1,29 @@
+# Network channels are defined ONLY here. No matching backend channel is needed.
+# Grant permissions on Velocity (for example, with LuckPerms installed on the proxy).
+private-chats:
+  staff:
+    enabled: true
+    toggleable: true
+    format: "<yellow><b>[STAFF]</b> {sender} » <message>"
+    permission: "seachat.chat.staff"
+    command: "sc"
+    servers:
+      # Velocity server names. Empty whitelist allows every server; blacklist always wins.
+      # Both lists apply to sending AND receiving.
+      whitelist: []
+      blacklist: []
+
+# Reload with /seachatproxy reload (permission: seachat.proxy.reload).
+# /seachatproxy leave exits network chat mode. Switching servers also exits it.
+messages:
+  prefix: "<aqua>[SeaChat]</aqua> "
+  denied: "<red>You cannot use this channel on this server.</red>"
+  unavailable: "<red>Private chat could not be confirmed. Check the backend bridge; use /seachatproxy leave to return to public chat.</red>"
+  toggle-enabled: "<yellow>Now chatting in {chat}. Use /{command} again to leave.</yellow>"
+  toggle-disabled: "<yellow>Private chat mode is off.</yellow>"
+  server-changed: "<yellow>Private chat mode was turned off because you changed servers.</yellow>"
+  pending: "<yellow>Please wait for the previous toggle to finish.</yellow>"
+  usage: "<yellow>Usage: /{command} <message></yellow>"
+  admin-usage: "<yellow>Usage: /seachatproxy <leave|reload></yellow>"
+  reload-success: "<green>Proxy chat configuration reloaded.</green>"
+  reload-failed: "<red>Reload failed. The previous configuration is still active; check the proxy log.</red>"

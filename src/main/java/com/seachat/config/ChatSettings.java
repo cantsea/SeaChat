@@ -47,6 +47,7 @@ public final class ChatSettings {
     private static final String DEFAULT_PREFIX = "<#ffffff><b>[<#1E90FF>SALTY<#ffffff>MC]</b><#ffffff>";
     private static final String DEFAULT_CHAT_FORMAT = "%luckperms_prefix%<reset> {player} %luckperms_suffix% <message>";
     private static final Map<String, String> DEFAULT_MESSAGES = Map.ofEntries(
+            Map.entry("private-chat-proxy-unavailable", "{prefix} Your private message could not be confirmed. Use /seachatproxy leave to return to public chat."),
             Map.entry("custom-command-only-players", "{prefix} Only players can use this command."),
             Map.entry("custom-command-no-permission", "{prefix} You do not have permission to use this command."),
             Map.entry("custom-command-failed", "{prefix} A configured command could not be run."),

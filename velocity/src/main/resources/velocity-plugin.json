@@ -1,0 +1,9 @@
+{
+  "id": "seachat",
+  "name": "SeaChat-Velocity",
+  "version": "${project.version}",
+  "description": "Centrally configured private chat channels for the Velocity network.",
+  "authors": [],
+  "dependencies": [],
+  "main": "com.seachat.velocity.SeaChatVelocity"
+}

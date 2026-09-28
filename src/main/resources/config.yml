@@ -32,6 +32,7 @@ display:
 
     cleanup-interval-seconds: 120
 
+# Server-only channels. Configure network channels in the Velocity plugin's config.yml.
 private-chats:
   local:
     enabled: true

@@ -53,6 +53,7 @@ public final class SeaChat extends JavaPlugin {
         this.pollManager = new PollManager(this, settings, state);
         this.privateChatManager = new PrivateChatManager(this, settings, state);
         this.privateChatManager.reloadChannels();
+        this.privateChatManager.startRelay();
         this.customCommandManager = new CustomCommandManager(this, settings);
         this.customCommandManager.reload();
         this.announcementManager = new AnnouncementManager(this, settings);
